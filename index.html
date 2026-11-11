@@ -226,11 +226,11 @@ function gain(n,p,m,s){const a=lv();D.xp=Math.max(0,D.xp+n);if(n<0)return snd('t
 /* Nuvem (Supabase): cada pessoa tem um ninho só dela */
 const SB_URL='https://nsjissvwnhaoyaqinzqp.supabase.co',SB_KEY='sb_publishable_a4_5xhZAn9NhGWV5SGTw3w_pwyZFIrN',GOOGLE=false;
 const sb=window.supabase?supabase.createClient(SB_URL,SB_KEY):null,back=()=>location.origin+location.pathname;
-let syncT,dirty=0;
+let syncT,dirty=0;const PV=!!window.NINHO_PREVIEW;
 const kD=()=>'ninho_d_'+UID,kX=()=>'ninho_dirty_'+UID,kA=()=>'ninho_at_'+UID;
 const save=()=>{if(!UID)return;ls(kD(),D);dirty=1;ls(kX(),1);clearTimeout(syncT);syncT=setTimeout(push,1200)};
 let cfx=0;
-async function push(){clearTimeout(syncT);if(!UID||!dirty||!navigator.onLine||cfx)return;const id=UID,r=await fetchR();if(r.err||UID!=id||cfx)return;
+async function push(){clearTimeout(syncT);if(PV)return dirty=0;if(!UID||!dirty||!navigator.onLine||cfx)return;const id=UID,r=await fetchR();if(r.err||UID!=id||cfx)return;
 if(r.data&&Date.parse(r.data.atualizado_em)!==ls(kA()))return conflict(r.data);const at=new Date().toISOString();
 try{const{error}=await sb.from('ninhos').upsert({user_id:id,dados:D,atualizado_em:at});if(!error&&UID==id){dirty=0;ls(kX(),0);ls(kA(),Date.parse(at))}}catch(e){}}
 function conflict(rd){cfx=1;const w=new Date(rd.atualizado_em).toLocaleString('pt-BR',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'}),o=document.createElement('div');o.id='cfx';
@@ -239,7 +239,7 @@ o.rd=rd;document.body.appendChild(o)}
 function cfxR(other){const o=$('#cfx'),rd=o.rd,at=Date.parse(rd.atualizado_em);o.remove();cfx=0;ls(kA(),at);
 if(other){dirty=0;ls(kX(),0);ls(kD(),rd.dados);closeM();boot(U,0,rd.dados);toast('Pronto: usando a versão do outro aparelho ✦')}else{push();toast('Pronto: mantida a versão deste aparelho ✦')}}
 async function fetchR(){try{const{data,error}=await sb.from('ninhos').select('dados,atualizado_em').eq('user_id',UID).maybeSingle();return error?{err:error}:{data}}catch(e){return{err:e}}}
-async function sync(){if(!UID||!navigator.onLine)return;if(dirty)return push();const id=UID,r=await fetchR();if(r.err||UID!=id||dirty)return;
+async function sync(){if(PV||!UID||!navigator.onLine)return;if(dirty)return push();const id=UID,r=await fetchR();if(r.err||UID!=id||dirty)return;
 if(!r.data){dirty=1;return push()}const at=Date.parse(r.data.atualizado_em);if(at===ls(kA()))return;
 ls(kD(),r.data.dados);ls(kA(),at);if(!$('#md').classList.contains('s'))boot(U,0,r.data.dados)}
 document.addEventListener('visibilitychange',()=>{if(!UID)return;document.hidden?push():sync()});
@@ -288,7 +288,8 @@ if(loc){boot(U,g,loc);sync()}else{wait('Abrindo o seu ninho…');const r=await f
 if(r.err){UID=null;return wait(navigator.onLine?'Não consegui abrir o seu ninho agora.':'Sem internet. Conecte-se para abrir o seu ninho pela primeira vez neste aparelho.','<button class="sgb w" onclick="init()">Tentar de novo</button>')}
 if(r.data){ls(kD(),r.data.dados);ls(kA(),Date.parse(r.data.atualizado_em))}boot(U,g,r.data?r.data.dados:{})}
 if(!D.cfg.email&&s.user.email){D.cfg.email=s.user.email;save()}}
-let inited=0;async function init(){if(!sb)return wait('Não consegui carregar o Ninho. Verifique a internet e recarregue a página.');
+let inited=0;async function init(){if(PV){UID='previa';U='você';boot(U,1,ls(kD())||{});return setTimeout(()=>toast('Modo prévia: os dados ficam só aqui'),1500)}
+if(!sb)return wait('Não consegui carregar o Ninho. Verifique a internet e recarregue a página.');
 const q=new URLSearchParams(location.hash.slice(1)+'&'+location.search.slice(1)),ue=q.get('error_description');if(ue)history.replaceState(null,'',back());
 if(!inited){inited=1;sb.auth.onAuthStateChange((ev,s)=>setTimeout(()=>{if(ev=='PASSWORD_RECOVERY'){UID=null;mode='np';return auth()}if(ev=='SIGNED_IN'&&s&&mode!='np')start(s,1);if(ev=='SIGNED_OUT'&&UID){UID=null;mode='in';auth()}}))}
 const{data:{session:s}}=await sb.auth.getSession();if(mode=='np')return;if(s)start(s,1);else auth(ue?(/expired|invalid/i.test(ue)?'Esse link expirou ou já foi usado. Peça um novo.':ue):'')}
@@ -296,7 +297,7 @@ function authOld(){$('#nav').innerHTML='';$('#bg').innerHTML='';$('#bg').dataset
 function boot(u,g,dd){U=u;D=Object.assign({tasks:[],days:{},meds:[],ev:[],xp:0,id:1,sp:0,fx:[],hr:[],lab:[],rw:[{id:1,t:'Comprar um livro novo',c:10},{id:2,t:'Pedir uma comidinha gostosa',c:5},{id:3,t:'30 minutos de descanso sem culpa',c:3}]},dd||{});D.cfg=Object.assign({snd:1,vib:1,fx:1,goal:8,photo:'',nick:'',email:'',bd:''},D.cfg);tab='t';fd='';spawn();if(!D.evs){['Dormi bem','Dormi mal','Social','Trabalho/estudo','Discussão','Tempo ao ar livre','Muito café','Tela demais','Procrastinação','Hiperfoco','Notícia ruim','Conquista'].forEach(n=>D.ev.includes(n)||D.ev.push(n));D.evs=1;save()}if(!D.exm){D.meds.push({n:'Vitamina D · 5 gotas (exemplo)',h:'08:00',f:'gotas'},{n:'Comprimido (exemplo) 10mg',h:'09:00',f:'comp'},{n:'Gel ou creme (exemplo)',h:'21:00',f:'gel'},{n:'Injeção (exemplo)',h:'20:00',f:'inj'});D.hr.push({id:Date.now(),n:'Adesivo de reposição (exemplo)',h:'08:00',iv:3,d:TODAY(),f:'adesivo'});D.exm=1;save()}
 $('#app').innerHTML='<div id="pg"><div id="hd"></div><div id="gl"></div><div id="v"></div></div>';
 $('#nav').innerHTML=[['t','Tarefas'],['h','Saúde'],['c','Agenda'],['d','Diário'],['s','Stats']].map(([k,l])=>`<button data-k="${k}" onclick="go2('${k}')" aria-label="${l}">${svg(IC[k])}${l}</button>`).join('');render();hiS(g)}
-async function out(){await push();if(dirty&&!confirm('Você está sem internet e algumas mudanças ainda não foram salvas na nuvem. Sair mesmo assim e perder essas mudanças?'))return;
+async function out(){if(PV)return toast('Na prévia não há conta. Use o site para entrar.');await push();if(dirty&&!confirm('Você está sem internet e algumas mudanças ainda não foram salvas na nuvem. Sair mesmo assim e perder essas mudanças?'))return;
 [kD(),kX(),kA()].forEach(k=>localStorage.removeItem(k));UID=null;EM='';dirty=0;closeM();mode='in';await sb.auth.signOut().catch(()=>{});auth()}
 const avS=()=>D.cfg.av>=0?'background:#e6e2d3;overflow:hidden':D.cfg.photo?`background-image:url(${D.cfg.photo})`:'',avT=()=>D.cfg.av>=0?avSvg(D.cfg.av):D.cfg.photo?'':esc((D.cfg.nick||U)[0].toUpperCase());
 const FR=['Um passo de cada vez.','Termine uma coisinha e o resto fica mais leve.','Ficou algo para trás? Tudo bem.','Seu ritmo também é ritmo.','Respira. Você está indo bem.','Feito é melhor que perfeito.','Hoje pode ser mais leve.'];

@@ -32,3 +32,10 @@ repositório para o app não depender de CDN.
 
 A chave `sb_publishable_...` no código é pública por natureza; a segurança vem das
 regras RLS da tabela.
+
+## Prévia no Claude (artifact)
+
+O artifact "Ninho (versão do site)" é uma cópia do `index.html` com
+`window.NINHO_PREVIEW=1`: abre sem login e guarda os dados só naquele navegador,
+porque artifacts não podem se conectar ao Supabase. Downloads (planilha, .ics) não
+funcionam ali. O original continua sendo este repositório.

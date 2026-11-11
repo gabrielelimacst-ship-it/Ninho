@@ -29,8 +29,8 @@ Lista viva do que ficou combinado. Marque com `[x]` o que for concluído.
 - [ ] (Melhoria) Juntar automaticamente as duas versões em vez de escolher uma
 - [x] Seção "Conexões e dados" (planilha, Apple Calendário, Google Agenda, Google)
 - [ ] Sincronização automática dos calendários (assinatura de agenda que se atualiza sozinha)
-- [ ] Decidir o papel do artifact "Ninho." no Claude: hoje o original é o GitHub,
-      e o artifact está desatualizado
+- [x] Artifact "Ninho (versão do site)" em modo prévia (sem login, dados só no navegador)
+- [ ] Decidir se apaga o artifact antigo "Ninho."
 
 ## Lembretes
 - No iPhone, pelo ícone da Tela de Início, entre com **e-mail e senha**
