@@ -27,6 +27,16 @@ Lista viva do que ficou combinado. Marque com `[x]` o que for concluído.
 - [x] Login com Google
 - [ ] (Opcional) Trazer de volta o "entrar sem senha" por link no e-mail
 
+## 4. Relógio Xiaomi (Mi Fitness) — combinado para outro momento
+- [ ] **A. Dados do relógio no Ninho**: Mi Fitness → app Saúde do iPhone → atalho
+      diário (app Atalhos) → mensageiro no Supabase → Ninho
+  - [ ] Ligar a integração com o Apple Saúde no Mi Fitness
+  - [ ] Decidir quais dados importam (sono, passos, batimentos, exercício, estresse)
+  - [ ] Mostrar no Diário e cruzar com humor e sintomas nas Estatísticas
+- [ ] **B. Lembretes do Ninho no relógio**: notificações do app (instalado na Tela
+      de Início) com envio programado pelo Supabase; o relógio espelha as do iPhone
+  - [ ] Começar por remédios, reposição hormonal e água
+
 ## 4. Sugestões para depois
 - [ ] Ícone e nome próprios ao adicionar à Tela de Início do celular
 - [ ] Endereço próprio (ex.: `meuninho.com.br`) — opcional, ~R$ 40/ano
