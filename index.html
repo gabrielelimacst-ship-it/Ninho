@@ -210,7 +210,7 @@ input[type=time],input[type=date],input[type=number]{-webkit-appearance:none;app
 .sw.on i{background:var(--ta,#fff)}
 #sh .rb{width:44px;height:44px;font-size:20px}
 body:has(#nav:not(:empty)){overflow:hidden}
-body:has(#nav:not(:empty)) #app{position:fixed;top:env(safe-area-inset-top,0px);left:0;right:0;bottom:var(--nvh,110px);max-width:none;margin:0;overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;padding-bottom:20px;-webkit-mask-image:linear-gradient(to bottom,#000 calc(100% - 14px),transparent);mask-image:linear-gradient(to bottom,#000 calc(100% - 14px),transparent)}
+body:has(#nav:not(:empty)) #app{position:fixed;top:env(safe-area-inset-top,0px);left:0;right:0;bottom:calc(env(safe-area-inset-bottom,0px) + var(--navH,72px) + 24px);max-width:none;margin:0;overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;padding-bottom:20px;-webkit-mask-image:linear-gradient(to bottom,#000 calc(100% - 14px),transparent);mask-image:linear-gradient(to bottom,#000 calc(100% - 14px),transparent)}
 body:has(#nav:not(:empty)) #pg{max-width:484px;margin:0 auto}
 nav svg{stroke-width:1.7}
 .dots i.ev{border-radius:1px;transform:rotate(45deg);width:4.5px;height:4.5px}
@@ -351,7 +351,7 @@ const avS=()=>D.cfg.av>=0?'background:#e6e2d3;overflow:hidden':D.cfg.photo?`back
 const FR=['Um passo de cada vez.','Termine uma coisinha e o resto fica mais leve.','Ficou algo para trás? Tudo bem.','Seu ritmo também é ritmo.','Respira. Você está indo bem.','Feito é melhor que perfeito.','Hoje pode ser mais leve.'];
 const hdr=t=>{const n=new Date();return`<div class="hd"><div><div class="gr">${n.toLocaleDateString('pt-BR',{weekday:'long',day:'numeric',month:'long'})}</div><h1>${t}</h1></div><button class="av" style="${avS()}" onclick="prof()" aria-label="Perfil">${avT()}</button></div>`};
 const V={t:['Tarefas',tasksV],h:['Saúde',healthV],c:['Agenda',calV],d:['Meu Diário',diaryV],s:['Estatísticas',statsV]};
-function nvH(){const n=$('#nav');if(!n||!n.firstChild)return;const t=n.getBoundingClientRect().top;document.documentElement.style.setProperty('--nvh',Math.ceil(innerHeight-t+12)+'px')}
+function nvH(){const n=$('#nav');if(!n||!n.firstChild)return;document.documentElement.style.setProperty('--navH',n.offsetHeight+'px')}
 addEventListener('resize',nvH);
 function render(q){spawn();bgS();glSync();const[t,f]=V[tab];$('#hd').innerHTML=hdr(t);$('#v').className=q?'q':'';$('#v').innerHTML=f();document.querySelectorAll('nav button').forEach(b=>b.classList.toggle('on',b.dataset.k==tab));if(q)last='';nvH()}
 function go2(k){if(k==tab)return;const p=$('#pg');p.classList.add('o');setTimeout(()=>{tab=k;render();scrollTo(0,0);$('#app').scrollTo(0,0);p.classList.remove('o');if(k=='t')setTimeout(visit,450)},220)}
