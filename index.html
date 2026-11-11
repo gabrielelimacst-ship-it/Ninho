@@ -168,17 +168,17 @@ nav button.on{background:var(--mf);color:#000;opacity:1}
 .lgtop{flex:1;display:flex;flex-direction:column;align-items:flex-start;justify-content:flex-start;padding:calc(48px + env(safe-area-inset-top,0px)) 28px 34px;text-align:left;color:#000;min-height:260px}
 .lgtop .nest{width:150px;animation:up 1.2s .2s both}.lgtop .lt{transform-box:view-box;animation:sw 3s ease-in-out infinite}
 .lgtop h1{font-size:32px;font-weight:640;line-height:1.05;margin:0 0 10px;animation:up 1.2s .5s both}.lgtop p{font-size:14px;opacity:.7;max-width:270px;margin:0;animation:up 1.2s .8s both}
-.lgs{background:var(--c1);color:var(--t1);border-radius:32px 32px 0 0;padding:28px 24px calc(28px + env(safe-area-inset-bottom,0px));box-shadow:0 -10px 30px rgba(0,0,0,.06);animation:sheet .7s cubic-bezier(.2,.9,.2,1) both}
+.lgs{background:var(--c1);color:var(--t1);border-radius:28px 28px 0 0;padding:22px 24px calc(18px + env(safe-area-inset-bottom,0px));box-shadow:0 -6px 24px rgba(0,0,0,.04);animation:sheet .7s cubic-bezier(.2,.9,.2,1) both}
 @keyframes sheet{from{transform:translateY(40px);opacity:0}}
-.lgs h2{font-family:Fraunces,Georgia,serif;font-variation-settings:"SOFT" 100,"WONK" 1;font-size:28px;font-weight:640;margin:0 0 18px}
+.lgs h2{font-family:Fraunces,Georgia,serif;font-variation-settings:"SOFT" 100,"WONK" 1;font-size:21px;font-weight:560;margin:0 0 14px}
 .lgs label{display:block;font-size:13px;color:var(--m2);margin:0 4px 6px}
-.fi2{position:relative;margin-bottom:16px}.fi2 svg{position:absolute;left:16px;top:50%;transform:translateY(-50%);width:18px;height:18px;color:var(--m2)}.fi2 input{padding-left:44px;background:var(--s1);border:1px solid transparent;border-radius:14px;box-shadow:none}
-.lgb{width:100%;background:var(--t1);color:var(--ta);border-radius:14px;padding:15px;font-weight:700;font-size:15px;margin-top:4px}
+.fi2{position:relative;margin-bottom:10px}.fi2 svg{position:absolute;left:15px;top:50%;transform:translateY(-50%);width:16px;height:16px;color:var(--m2);opacity:.7}.fi2 input{padding:11px 16px 11px 40px;font-size:15px;background:var(--s1);border:1px solid transparent;border-radius:99px;box-shadow:none}
+.lgb{width:100%;background:var(--t1);color:var(--ta);border-radius:99px;padding:12px;font-weight:600;font-size:14px;margin-top:2px}
 .lgg{width:100%;display:flex;align-items:center;justify-content:center;gap:10px;background:var(--s1);color:var(--t1);border:1px solid rgba(127,127,127,.25);border-radius:14px;padding:14px;font-weight:700;font-size:15px}.lgg svg{width:20px;height:20px}
 .lgo{display:flex;align-items:center;gap:12px;color:var(--m2);font-size:13px;margin:16px 0}.lgo:before,.lgo:after{content:"";flex:1;height:1px;background:rgba(127,127,127,.25)}
-.lgx{display:flex;flex-direction:column;align-items:center;gap:10px;margin-top:16px}.lgx button{background:none;color:var(--t1);font-weight:600;font-size:13px;text-decoration:underline;padding:2px}
+.lgx{display:flex;flex-direction:column;align-items:center;gap:8px;margin-top:12px}.lgx button{background:none;color:var(--m2);font-weight:500;font-size:12px;padding:2px}
 #er.ok{color:var(--sg)}
-.lgl{text-align:center;font-size:13px;color:var(--m2);margin:16px 0 0}.lgl button{background:none;color:var(--t1);font-weight:700;text-decoration:underline;padding:0}
+.lgl{text-align:center;font-size:12px;color:var(--m2);margin:8px 0 0}.lgl button{background:none;color:var(--t1);font-weight:600;text-decoration:underline;text-underline-offset:3px;padding:0}
 @media(prefers-color-scheme:dark){.lgw{background:#000}.lgtop{color:#fff}.lgtop .nest path{stroke-width:.7px;stroke-opacity:.78}.lgtop .nest ellipse{stroke:#000;stroke-width:.8px}}
 </style></head><body>
 <div id="bg"></div><div id="app"></div><nav id="nav"></nav><div id="md" onclick="if(event.target==this)closeM()"><div id="sh"></div></div><div id="toast"></div>
@@ -235,21 +235,22 @@ const hs=async(u,p)=>{try{const b=await crypto.subtle.digest('SHA-256',new TextE
 function auth(msg,ok){$('#nav').innerHTML='';$('#bg').innerHTML='';$('#bg').dataset.k='';const av=$('#avb');av&&av.remove();const h=new Date().getHours(),gr=h<5?'Boa noite':h<12?'Bom dia':h<18?'Boa tarde':'Boa noite',m=mode,up=m=='up';
 const T={in:'Entrar',up:'Criar conta',link:'Entrar sem senha',rec:'Recuperar senha',np:'Nova senha'}[m],B={in:'Entrar',up:'Criar meu ninho',link:'Enviar link de acesso',rec:'Enviar link de recuperação',np:'Salvar nova senha'}[m];
 const em=m!='np',pw=m=='in'||m=='up'||m=='np',sv=$('#em')?$('#em').value:'',sw=k=>`mode='${k}';auth()`;
-const I=(id,lb,ic,ex)=>`<label for="${id}">${lb}</label><div class="fi2">${svg(ic)}<input id="${id}" ${ex}></div>`,MAIL='<rect x="3" y="5" width="18" height="14" rx="3"/><path d="M4 7l8 6 8-6"/>',LOCK='<rect x="5" y="11" width="14" height="10" rx="3"/><path d="M8 11V8a4 4 0 018 0v3"/>';
+const I=(id,lb,ic,ex)=>`<div class="fi2">${svg(ic)}<input id="${id}" aria-label="${lb}" ${ex}></div>`,MAIL='<rect x="3" y="5" width="18" height="14" rx="3"/><path d="M4 7l8 6 8-6"/>',LOCK='<rect x="5" y="11" width="14" height="10" rx="3"/><path d="M8 11V8a4 4 0 018 0v3"/>';
 const sub={link:'Vamos enviar um link para o seu e-mail. É só tocar nele para entrar.',rec:'Vamos enviar um link para você criar uma senha nova.',np:'Escolha a sua nova senha.'}[m];
-$('#app').innerHTML=`<div class="lgw"><div class="lgtop"><h1>${up?'Boas-vindas ao Ninho.':gr+'.'}</h1><p>${up?'Um cantinho calmo para fazer o que dá, no seu tempo.':'Que bom te ver de novo. Seu ninho está do jeitinho que você deixou.'}</p></div><div class="lgs"><h2>${T}</h2>${sub?`<p class="sm" style="margin:-8px 4px 16px">${sub}</p>`:''}
+$('#app').innerHTML=`<div class="lgw"><div class="lgtop"><h1>${up?'Boas-vindas ao Ninho.':gr+'.'}</h1><p>${up?'Um cantinho calmo para fazer o que dá, no seu tempo.':'Que bom te ver de novo. Seu ninho está do jeitinho que você deixou.'}</p></div><div class="lgs"><h2>${T}</h2>${sub?`<p class="sm" style="margin:-6px 4px 14px;font-size:12px">${sub}</p>`:''}
 ${GOOGLE&&(m=='in'||m=='up')?`<button class="lgg" onclick="gGo()"><svg viewBox="0 0 24 24"><path fill="#4285F4" d="M23.5 12.3c0-.8-.1-1.6-.2-2.3H12v4.4h6.5a5.6 5.6 0 01-2.4 3.6v3h3.9c2.3-2.1 3.5-5.2 3.5-8.7z"/><path fill="#34A853" d="M12 24c3.2 0 6-1.1 8-2.9l-3.9-3c-1.1.7-2.5 1.2-4.1 1.2-3.1 0-5.8-2.1-6.7-5H1.3v3.1A12 12 0 0012 24z"/><path fill="#FBBC05" d="M5.3 14.3a7.2 7.2 0 010-4.6V6.6H1.3a12 12 0 000 10.8z"/><path fill="#EA4335" d="M12 4.8c1.8 0 3.3.6 4.6 1.8l3.4-3.4A12 12 0 001.3 6.6l4 3.1c.9-2.8 3.6-4.9 6.7-4.9z"/></svg> Continuar com Google</button><div class="lgo">ou com e-mail</div>`:''}
-${em?I('em','E-mail',MAIL,`type="email" placeholder="voce@email.com" autocomplete="email" autocapitalize="none" value="${esc(sv)}" onkeydown="if(event.key=='Enter')go()"`):''}
-${pw?I('p',m=='np'?'Nova senha':'Senha',LOCK,`type="password" placeholder="${m=='in'?'Sua senha':'Pelo menos 6 caracteres'}" autocomplete="${m=='in'?'current-password':'new-password'}" onkeydown="if(event.key=='Enter')go()"`):''}
-<p id="er" class="sm${ok?' ok':''}" role="alert" style="min-height:18px;margin:0 4px 8px">${msg?esc(msg):''}</p><button class="lgb" id="gob" onclick="go()">${B}</button>
-<div class="lgx">${m=='in'?`<button onclick="${sw('link')}">Prefere sem senha? Receber link por e-mail</button><button onclick="${sw('rec')}">Esqueci minha senha</button>`:m=='np'?'':`<button onclick="${sw('in')}">Voltar para entrar com senha</button>`}</div>
+${em?I('em','E-mail',MAIL,`type="email" placeholder="E-mail" autocomplete="email" autocapitalize="none" value="${esc(sv)}" onkeydown="if(event.key=='Enter')go()"`):''}
+${pw?I('p',m=='np'?'Nova senha':'Senha',LOCK,`type="password" placeholder="${m=='in'?'Senha':'Senha (6+ caracteres)'}" autocomplete="${m=='in'?'current-password':'new-password'}" onkeydown="if(event.key=='Enter')go()"`):''}
+<p id="er" class="sm${ok?' ok':''}" role="alert" style="min-height:16px;margin:0 6px 6px;font-size:12px">${msg?esc(msg):''}</p><button class="lgb" id="gob" onclick="go()">${B}</button>
+<div class="lgx">${m=='in'?`<button onclick="${sw('rec')}">Esqueci minha senha</button>`:m=='np'?'':`<button onclick="${sw('in')}">Voltar</button>`}</div>
 ${m=='in'||m=='up'?`<p class="lgl">${up?'Já tem conta?':'Ainda não tem conta?'} <button onclick="${sw(up?'in':'up')}">${up?'Entrar':'Criar conta'}</button></p>`:''}</div></div>`}
 const ERR=e=>{const t=((e&&e.message)||'')+'',c=e&&e.code;
 if(/invalid login|invalid_credentials/i.test(t+c))return'E-mail ou senha incorretos.';
 if(/not confirmed/i.test(t))return'Falta confirmar o seu e-mail: toque no link que enviamos.';
 if(/already registered|already exists/i.test(t))return'Esse e-mail já tem conta. Tente entrar.';
 if(/signups? not allowed|signup.*disabled|otp_disabled/i.test(t+c))return'O Ninho está só para convidados. Peça um convite.';
-if(/rate limit|too many|security purposes/i.test(t)||(e&&e.status==429))return'Muitos e-mails em pouco tempo. Espere alguns minutos e tente de novo.';
+{const w=t.match(/after (\d+) seconds?/i);if(w)return'Aguarde '+w[1]+' segundos antes de tentar de novo.'}
+if(/rate limit|too many|security purposes/i.test(t)||(e&&e.status==429))return'O Ninho atingiu o limite de e-mails por hora. Se você já tentou antes, procure o e-mail de confirmação (veja o spam também). Se não chegou, tente de novo daqui a 1 hora.';
 if(/password.*(6|characters|short)|weak/i.test(t))return'A senha precisa ter pelo menos 6 caracteres.';
 if(/same.*password|different from the old/i.test(t))return'A nova senha precisa ser diferente da antiga.';
 if(/fetch|network|load failed/i.test(t)||!navigator.onLine)return'Sem conexão. Verifique a internet e tente de novo.';
