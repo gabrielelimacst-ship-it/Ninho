@@ -19,7 +19,7 @@ Lista viva do que ficou combinado. Marque com `[x]` o que for concluído.
 - [ ] Personalizar os e-mails em português: confirmação de conta, recuperar senha, convite
 
 ## 3. Login
-- [ ] Login com Google (configurar no Google Cloud + Supabase, depois ligar o botão no app)
+- [x] Login com Google
 - [ ] (Opcional) Trazer de volta o "entrar sem senha" por link no e-mail
 
 ## 4. Sugestões para depois
@@ -28,7 +28,10 @@ Lista viva do que ficou combinado. Marque com `[x]` o que for concluído.
 - [x] Avisar quando o mesmo ninho for mudado em dois aparelhos ao mesmo tempo
 - [ ] (Melhoria) Juntar automaticamente as duas versões em vez de escolher uma
 - [x] Seção "Conexões e dados" (planilha, Apple Calendário, Google Agenda, Google)
-- [ ] Sincronização automática dos calendários (assinatura de agenda que se atualiza sozinha)
+- [x] Ver eventos do Google Agenda e do Apple Calendário na aba Agenda (só leitura)
+- [ ] Instalar o mensageiro `agenda` no Supabase (Edge Functions) e conectar as agendas
+- [ ] (Depois) Mostrar compromissos de hoje também na aba Tarefas
+- [ ] (Depois) Transformar um compromisso em tarefa
 - [x] Artifact "Ninho (versão do site)" em modo prévia (sem login, dados só no navegador)
 - [ ] Decidir se apaga o artifact antigo "Ninho."
 

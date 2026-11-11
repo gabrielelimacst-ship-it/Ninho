@@ -39,3 +39,19 @@ O artifact "Ninho (versão do site)" é uma cópia do `index.html` com
 `window.NINHO_PREVIEW=1`: abre sem login e guarda os dados só naquele navegador,
 porque artifacts não podem se conectar ao Supabase. Downloads (planilha, .ics) não
 funcionam ali. O original continua sendo este repositório.
+
+## Agendas (Google e Apple)
+
+A aba Agenda mostra, só para leitura, os eventos das agendas conectadas em
+Perfil → Conexões e dados. Cada pessoa cola o link secreto da própria agenda
+(Google: "Endereço secreto no formato iCal"; Apple: link do Calendário Público).
+
+O navegador não pode ler esses links direto, então o app chama a Edge Function
+`agenda` (`supabase/functions/agenda/index.ts`), que:
+- só atende quem está logado no Ninho;
+- só aceita links de `calendar.google.com` e `*.icloud.com`;
+- expande eventos repetidos e fusos horários com `ical.js`.
+
+Para instalar: Supabase → Edge Functions → Deploy a new function → Via Editor,
+nome `agenda`, colar o arquivo e desligar a verificação de JWT do gateway
+(a função confere o login sozinha).
