@@ -209,14 +209,16 @@ input[type=time],input[type=date],input[type=number]{-webkit-appearance:none;app
 #sh .st .sm{margin:0 4px 6px}
 .sw.on i{background:var(--ta,#fff)}
 #sh .rb{width:44px;height:44px;font-size:20px}
-#nvm{position:fixed;left:0;right:0;bottom:0;height:var(--nvh,110px);background:linear-gradient(to bottom,transparent,var(--bg) 14px);z-index:4;pointer-events:none}#nav:empty+#nvm{display:none}
+body:has(#nav:not(:empty)){overflow:hidden}
+body:has(#nav:not(:empty)) #app{position:fixed;top:env(safe-area-inset-top,0px);left:0;right:0;bottom:var(--nvh,110px);max-width:none;margin:0;overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;padding-bottom:20px;-webkit-mask-image:linear-gradient(to bottom,#000 calc(100% - 14px),transparent);mask-image:linear-gradient(to bottom,#000 calc(100% - 14px),transparent)}
+body:has(#nav:not(:empty)) #pg{max-width:484px;margin:0 auto}
 nav svg{stroke-width:1.7}
 .dots i.ev{border-radius:1px;transform:rotate(45deg);width:4.5px;height:4.5px}
 .evh{font-size:11.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;opacity:.6;margin:16px 4px 2px}
 .evr{gap:12px!important;justify-content:flex-start!important}.evt{font-size:13px;font-variant-numeric:tabular-nums;opacity:.75;min-width:58px}.evc{font-size:11px;opacity:.5}
 #sh .st{font-size:15px}#sh .st>.sm{font-size:12.5px}
 </style></head><body>
-<div id="bg"></div><div id="app"></div><nav id="nav"></nav><div id="nvm" aria-hidden="true"></div><div id="md" onclick="if(event.target==this)mdBack()"><div id="sh"></div></div><div id="toast"></div>
+<div id="bg"></div><div id="app"></div><nav id="nav"></nav><div id="md" onclick="if(event.target==this)mdBack()"><div id="sh"></div></div><div id="toast"></div>
 <script src="supabase.js"></script>
 <script>
 const $=s=>document.querySelector(s),pad=n=>String(n).padStart(2,'0'),iso=d=>d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate()),TODAY=()=>iso(new Date());
@@ -243,10 +245,14 @@ const A=(...h)=>{const o=typeof h[0]=='number'?h.shift():0;return h.map((x,i)=>`
 const hero=(l,b,s,k,x='')=>`<div class="row sp"><div style="flex:1"><div class="lb" style="margin:0">${l}</div><div class="big">${b}</div><div class="sm">${s}</div>${x}</div></div>`;
 const empty=t=>`<div style="text-align:center"><p class="sm">${t}</p></div>`;
 /* Sons e efeitos */
-let AC;function tone(f,t,d,ty='sine',v=.15,f2){const a=AC,n=a.currentTime+t,o=a.createOscillator(),g=a.createGain();o.type=ty;o.frequency.setValueAtTime(f,n);f2&&o.frequency.exponentialRampToValueAtTime(f2,n+d);g.gain.setValueAtTime(0,n);g.gain.linearRampToValueAtTime(v,n+.01);g.gain.exponentialRampToValueAtTime(.001,n+d);o.connect(g);g.connect(a.destination);o.start(n);o.stop(n+d+.05)}
-function snd(k){if(!D.cfg.snd)return;try{AC=AC||new(window.AudioContext||window.webkitAudioContext)();AC.resume();
+let AC;const acOk=()=>{try{AC=AC||new(window.AudioContext||window.webkitAudioContext)();if(AC.state!='running')AC.resume();if(!AC.u){const b=AC.createBuffer(1,1,22050),s=AC.createBufferSource();s.buffer=b;s.connect(AC.destination);s.start(0);AC.u=1}}catch(e){}};
+['pointerdown','touchstart','keydown'].forEach(ev=>addEventListener(ev,acOk,{capture:true,passive:true}));
+document.addEventListener('visibilitychange',()=>{if(!document.hidden&&AC)AC.resume()});
+function tone(f,t,d,ty='sine',v=.15,f2){const a=AC,n=a.currentTime+t,o=a.createOscillator(),g=a.createGain();o.type=ty;o.frequency.setValueAtTime(f,n);f2&&o.frequency.exponentialRampToValueAtTime(f2,n+d);g.gain.setValueAtTime(0,n);g.gain.linearRampToValueAtTime(v,n+.01);g.gain.exponentialRampToValueAtTime(.001,n+d);o.connect(g);g.connect(a.destination);o.start(n);o.stop(n+d+.05)}
+function snd(k){if(!D.cfg.snd)return;acOk();if(AC&&AC.state!='running'){AC.resume().then(()=>snd2(k)).catch(()=>{});return}snd2(k)}
+function snd2(k){try{
 if(k=='piu'){tone(2400+Math.random()*500,0,.06,'sine',.05,3300);tone(2800,.08,.07,'sine',.04,3600)}else if(k=='hi'){[392,523,659,784].forEach((f,i)=>tone(f,i*.12,1.6,'sine',.08));tone(1568,.55,1.2,'sine',.03)}else if(k=='w'){tone(280,0,.16,'sine',.22,900);tone(500,.1,.14,'sine',.16,1300);tone(380,.2,.2,'sine',.12,1000)}
-else if(k=='adesivo'){nz(0,.12,2500,.18);tone(180,.1,.14,'sine',.2,90)}else if(k=='gotas'){tone(1400,0,.12,'sine',.18,700);tone(1100,.16,.14,'sine',.16,550);tone(1600,.34,.1,'sine',.12,900)}else if(k=='gel'){nz(0,.25,700,.12);tone(220,0,.25,'sine',.12,120)}else if(k=='inj'){tone(2200,0,.03,'square',.06);tone(2200,.12,.03,'square',.06);tone(880,.2,.18,'triangle',.1)}else if(k=='ok'||k=='comp'){const s=[523,587,659,784,880],i=Math.random()*3|0;[0,1,2].forEach(j=>tone(s[i+j],j*.08,.4,'triangle',.14))}else tone(660,0,.07,'sine',.08)}catch(e){}}
+else if(k=='adesivo'){nz(0,.12,2500,.18);tone(180,.1,.14,'sine',.2,90)}else if(k=='gotas'){tone(1400,0,.12,'sine',.18,700);tone(1100,.16,.14,'sine',.16,550);tone(1600,.34,.1,'sine',.12,900)}else if(k=='gel'){nz(0,.25,700,.12);tone(220,0,.25,'sine',.12,120)}else if(k=='inj'){tone(2200,0,.03,'square',.06);tone(2200,.12,.03,'square',.06);tone(880,.2,.18,'triangle',.1)}else if(k=='ok'||k=='comp'){const s=[523,587,659,784,880],i=Math.random()*3|0;[0,1,2].forEach(j=>tone(s[i+j],j*.08,.4,'triangle',.14))}else if(k=='add'){tone(587,0,.12,'triangle',.16,880);tone(988,.07,.18,'sine',.12)}else tone(740,0,.09,'triangle',.14,620)}catch(e){}}
 const hap=(ms=20)=>{try{if(navigator.vibrate)return navigator.vibrate(ms);const l=document.createElement('label'),i=document.createElement('input');l.ariaHidden='true';l.style.display='none';i.type='checkbox';i.setAttribute('switch','');l.appendChild(i);document.head.appendChild(l);l.click();l.remove()}catch(e){}};
 const vibr=()=>D.cfg.vib&&hap(),ctr=e=>{const r=e.currentTarget.getBoundingClientRect();return[r.x+r.width/2,r.y+r.height/2]},lv=()=>1+Math.floor(D.xp/100);
 function toast(m){const t=$('#toast');t.textContent=m;t.classList.add('s');clearTimeout(toast.t);toast.t=setTimeout(()=>t.classList.remove('s'),2300)}
@@ -348,7 +354,7 @@ const V={t:['Tarefas',tasksV],h:['Saúde',healthV],c:['Agenda',calV],d:['Meu Di�
 function nvH(){const n=$('#nav');if(!n||!n.firstChild)return;const t=n.getBoundingClientRect().top;document.documentElement.style.setProperty('--nvh',Math.ceil(innerHeight-t+12)+'px')}
 addEventListener('resize',nvH);
 function render(q){spawn();bgS();glSync();const[t,f]=V[tab];$('#hd').innerHTML=hdr(t);$('#v').className=q?'q':'';$('#v').innerHTML=f();document.querySelectorAll('nav button').forEach(b=>b.classList.toggle('on',b.dataset.k==tab));if(q)last='';nvH()}
-function go2(k){if(k==tab)return;const p=$('#pg');p.classList.add('o');setTimeout(()=>{tab=k;render();scrollTo(0,0);p.classList.remove('o');if(k=='t')setTimeout(visit,450)},220)}
+function go2(k){if(k==tab)return;const p=$('#pg');p.classList.add('o');setTimeout(()=>{tab=k;render();scrollTo(0,0);$('#app').scrollTo(0,0);p.classList.remove('o');if(k=='t')setTimeout(visit,450)},220)}
 let BK=null;function openM(h,bk){BK=bk||null;$('#sh').innerHTML=h;$('#md').classList.add('s')}
 function mdBack(){BK?Function(BK)():closeM()}
 function closeM(){$('#md').classList.remove('s');$('#sh').style.transform='';if(D)render(1)}
@@ -360,7 +366,7 @@ return A(hero('Hoje',`${dn}/${L.length} feitas`,nx?'Próxima: '+esc(nx.t):L.leng
 `<div class="lb">O que precisamos fazer hoje?</div><input id="nt" placeholder="Nova tarefa..." onkeydown="if(event.key=='Enter')addT()"><div class="chips" id="cc">${CT.map((c,i)=>`<button class="chip ${i==fc?'on':''}" onclick="sc(${i})">${c[0]} ${c[1]}</button>`).join('')}</div><div class="row" style="margin-bottom:12px"><div class="seg f" id="sd">${PD.map(([k,e,n])=>`<button class="${k==fd?'on':''}" style="--k:var(--bl)" onclick="sdp('${k}')">${e} ${n}</button>`).join('')}</div><button class="rb" id="rcb" onclick="cr()" aria-label="Repetição">${RE[fr]}</button></div><div class="sm" style="margin:-4px 4px 12px">Sem período marcado, vale para qualquer hora.</div><div class="row sp"><div class="seg" id="sg">${['b','m','a'].map(k=>`<button class="${k==fp?'on':''}" style="--k:var(${PR[k][1]})" onclick="sp('${k}')">${PR[k][0]}</button>`).join('')}</div><button class="plus" onclick="addT()" aria-label="Adicionar">+</button></div>`)
 +`<div class="lb2">A fazer</div>${lists(L)}${doneV(L)}`}
 const sc=i=>{fc=i;document.querySelectorAll('#cc .chip').forEach((b,j)=>b.classList.toggle('on',j==i))},sp=k=>{fp=k;document.querySelectorAll('#sg button').forEach((b,j)=>b.classList.toggle('on','bma'[j]==k))};
-function addT(){const t=$('#nt').value.trim();if(!t)return;const T=TODAY(),o={id:D.id++,t,p:fp,c:fc,d:T,x:0,pd:fd};if(fr){const f={id:D.id++,t,p:fp,c:fc,r:fr,d:T,pd:fd};D.fx.push(f);o.src=f.id;o.rr=fr}D.tasks.push(o);fr=0;save();snd('t');render(1)}
+function addT(){const t=$('#nt').value.trim();if(!t)return;const T=TODAY(),o={id:D.id++,t,p:fp,c:fc,d:T,x:0,pd:fd};if(fr){const f={id:D.id++,t,p:fp,c:fc,r:fr,d:T,pd:fd};D.fx.push(f);o.src=f.id;o.rr=fr}D.tasks.push(o);fr=0;save();snd('add');vibr();render(1)}
 function dT(id){D.tasks=D.tasks.filter(t=>t.id!=id);save();render(1)}
 function tg(id,e){const t=D.tasks.find(t=>t.id==id),p=ctr(e);t.x=t.x?0:1;last='t'+id;
 if(t.x){t.dt=TODAY();conf('t'+id,1,PR[t.p][2],e.currentTarget);const b=bal();D.rw.filter(r=>r.c==b).forEach(r=>setTimeout(()=>{toast('🎁 Recompensa liberada: '+r.t);burst(innerWidth/2,innerHeight*.35,30)},1300));if(!tl().some(x=>!x.x)){setTimeout(allDone2,2000)}}else{delete t.dt;conf('t'+id,0,PR[t.p][2])}
@@ -520,7 +526,7 @@ const E=[[84,84,-25],[114,80,20],[80,112,15],[107,116,-10],[127,102,35]];h+=E.ma
 for(let i=0;i<120;i++)h+=arc(46,82,i%5==0,1+r()*.5);
 for(let i=0;i<16;i++){const a=r()*6.283,d1=70+r()*10,d2=90+r()*14,o=p(a,d1).split(' ');h+=`<path class="lt" style="transform-origin:${o[0]}px ${o[1]}px;animation-delay:-${(r()*3).toFixed(2)}s;animation-duration:${(2.4+r()*1.8).toFixed(2)}s" stroke-width="1.200" d="M${p(a,d1)}Q${p(a+.12,(d1+d2)/2)} ${p(a+(r()-.4)*.3,d2)}"/>`}
 return`<svg class="nest" viewBox="0 0 200 200" fill="none" stroke="currentColor" stroke-linecap="round" aria-hidden="true">${h}</svg>`}
-function hiS(g){const n=new Date(),h=n.getHours(),o=document.createElement('div');o.id='hi';o.innerHTML=`<h1>${h<5?'Boa noite':h<12?'Bom dia':h<18?'Boa tarde':'Boa noite'}, ${esc(D.cfg.nick||U)}</h1><p>Fazendo o que dá,<br>no seu ninho,<br>no seu tempo</p>${nestSVG()}<small>toque para começar</small>`;document.body.appendChild(o);if(g)snd('hi');let done=0;const go=t=>{if(done)return;done=1;if(t&&!g)snd('hi');o.classList.add('o');setTimeout(()=>o.remove(),950);setTimeout(visit,900)};o.onclick=()=>go(1)}
+function hiS(g){const n=new Date(),h=n.getHours(),o=document.createElement('div');o.id='hi';o.innerHTML=`<h1>${h<5?'Boa noite':h<12?'Bom dia':h<18?'Boa tarde':'Boa noite'}, ${esc(D.cfg.nick||U)}</h1><p>Fazendo o que dá,<br>no seu ninho,<br>no seu tempo</p>${nestSVG()}<small>toque para começar</small>`;document.body.appendChild(o);let hi=0;if(g&&AC&&AC.state=='running'){snd('hi');hi=1}let done=0;const go=t=>{if(done)return;done=1;if(t&&!hi)snd('hi');o.classList.add('o');setTimeout(()=>o.remove(),950);setTimeout(visit,900)};o.onpointerdown=()=>go(1)}
 /* Galho do dia: cada confirmação traz um passarinho */
 const GW=360,GH=120,Q=[[-8,80],[170,36],[318,66]];
 const bz=t=>{const u=1-t;return[u*u*Q[0][0]+2*u*t*Q[1][0]+t*t*Q[2][0],u*u*Q[0][1]+2*u*t*Q[1][1]+t*t*Q[2][1]]},bzd=t=>[2*(1-t)*(Q[1][0]-Q[0][0])+2*t*(Q[2][0]-Q[1][0]),2*(1-t)*(Q[1][1]-Q[0][1])+2*t*(Q[2][1]-Q[1][1])],thk=t=>(1-t*.8)*6.6;
