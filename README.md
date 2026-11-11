@@ -22,7 +22,8 @@ uma linha por pessoa, protegida por RLS — cada conta só lê e grava o própri
 
 ## Login
 
-- E-mail + senha, link mágico por e-mail e recuperação de senha: ativos.
+- Na tela: e-mail + senha e "Esqueci minha senha".
+- Link mágico por e-mail: pronto no código, mas sem botão na tela por enquanto.
 - Google: pronto no código, desligado (`GOOGLE=false` no `index.html`) até o
   provedor Google ser configurado no Supabase.
 

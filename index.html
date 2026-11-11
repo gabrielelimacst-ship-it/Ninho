@@ -242,7 +242,7 @@ ${GOOGLE&&(m=='in'||m=='up')?`<button class="lgg" onclick="gGo()"><svg viewBox="
 ${em?I('em','E-mail',MAIL,`type="email" placeholder="voce@email.com" autocomplete="email" autocapitalize="none" value="${esc(sv)}" onkeydown="if(event.key=='Enter')go()"`):''}
 ${pw?I('p',m=='np'?'Nova senha':'Senha',LOCK,`type="password" placeholder="${m=='in'?'Sua senha':'Pelo menos 6 caracteres'}" autocomplete="${m=='in'?'current-password':'new-password'}" onkeydown="if(event.key=='Enter')go()"`):''}
 <p id="er" class="sm${ok?' ok':''}" role="alert" style="min-height:18px;margin:0 4px 8px">${msg?esc(msg):''}</p><button class="lgb" id="gob" onclick="go()">${B}</button>
-<div class="lgx">${m=='in'?`<button onclick="${sw('link')}">Prefere sem senha? Receber link por e-mail</button><button onclick="${sw('rec')}">Esqueci minha senha</button>`:m=='np'?'':`<button onclick="${sw('in')}">Voltar para entrar com senha</button>`}</div>
+<div class="lgx">${m=='in'?`<button onclick="${sw('rec')}">Esqueci minha senha</button>`:m=='np'?'':`<button onclick="${sw('in')}">Voltar</button>`}</div>
 ${m=='in'||m=='up'?`<p class="lgl">${up?'Já tem conta?':'Ainda não tem conta?'} <button onclick="${sw(up?'in':'up')}">${up?'Entrar':'Criar conta'}</button></p>`:''}</div></div>`}
 const ERR=e=>{const t=((e&&e.message)||'')+'',c=e&&e.code;
 if(/invalid login|invalid_credentials/i.test(t+c))return'E-mail ou senha incorretos.';
