@@ -16,11 +16,12 @@ Lista viva do que ficou combinado. Marque com `[x]` o que for concluído.
       (Authentication → Sign In / Providers → "Allow new users to sign up")
 
 ## 2. E-mails com cara de Ninho
-- [ ] Ligar e-mail próprio (SMTP) com o Gmail + "senha de app" do Google
+- [x] Ligar e-mail próprio (SMTP) com o Gmail + "senha de app" do Google
   - remetente passa a ser "Ninho" em vez de "Supabase Auth"
   - acaba o limite de 2 e-mails por hora
   - libera a edição dos modelos de e-mail
-- [ ] Personalizar os e-mails em português: confirmação de conta, recuperar senha, convite
+- [x] Personalizar os e-mails em português: confirmação de conta, recuperar senha, convite (modelos em `emails/`)
+- [ ] Testar: "Esqueci minha senha" deve chegar de "Ninho", em português
 
 ## 3. Login
 - [x] Login com Google
