@@ -249,7 +249,8 @@ if(/invalid login|invalid_credentials/i.test(t+c))return'E-mail ou senha incorre
 if(/not confirmed/i.test(t))return'Falta confirmar o seu e-mail: toque no link que enviamos.';
 if(/already registered|already exists/i.test(t))return'Esse e-mail já tem conta. Tente entrar.';
 if(/signups? not allowed|signup.*disabled|otp_disabled/i.test(t+c))return'O Ninho está só para convidados. Peça um convite.';
-if(/rate limit|too many|security purposes/i.test(t)||(e&&e.status==429))return'Muitos e-mails em pouco tempo. Espere alguns minutos e tente de novo.';
+{const w=t.match(/after (\d+) seconds?/i);if(w)return'Aguarde '+w[1]+' segundos antes de tentar de novo.'}
+if(/rate limit|too many|security purposes/i.test(t)||(e&&e.status==429))return'O Ninho atingiu o limite de e-mails por hora. Se você já tentou antes, procure o e-mail de confirmação (veja o spam também). Se não chegou, tente de novo daqui a 1 hora.';
 if(/password.*(6|characters|short)|weak/i.test(t))return'A senha precisa ter pelo menos 6 caracteres.';
 if(/same.*password|different from the old/i.test(t))return'A nova senha precisa ser diferente da antiga.';
 if(/fetch|network|load failed/i.test(t)||!navigator.onLine)return'Sem conexão. Verifique a internet e tente de novo.';
