@@ -174,16 +174,21 @@ nav button.on{background:var(--mf);color:#000;opacity:1}
 .lgs label{display:block;font-size:13px;color:var(--m2);margin:0 4px 6px}
 .fi2{position:relative;margin-bottom:16px}.fi2 svg{position:absolute;left:16px;top:50%;transform:translateY(-50%);width:18px;height:18px;color:var(--m2)}.fi2 input{padding-left:44px;background:var(--s1);border:1px solid transparent;border-radius:14px;box-shadow:none}
 .lgb{width:100%;background:var(--t1);color:var(--ta);border-radius:14px;padding:15px;font-weight:700;font-size:15px;margin-top:4px}
+.lgg{width:100%;display:flex;align-items:center;justify-content:center;gap:10px;background:var(--s1);color:var(--t1);border:1px solid rgba(127,127,127,.25);border-radius:14px;padding:14px;font-weight:700;font-size:15px}.lgg svg{width:20px;height:20px}
+.lgo{display:flex;align-items:center;gap:12px;color:var(--m2);font-size:13px;margin:16px 0}.lgo:before,.lgo:after{content:"";flex:1;height:1px;background:rgba(127,127,127,.25)}
+.lgx{display:flex;flex-direction:column;align-items:center;gap:10px;margin-top:16px}.lgx button{background:none;color:var(--t1);font-weight:600;font-size:13px;text-decoration:underline;padding:2px}
+#er.ok{color:var(--sg)}
 .lgl{text-align:center;font-size:13px;color:var(--m2);margin:16px 0 0}.lgl button{background:none;color:var(--t1);font-weight:700;text-decoration:underline;padding:0}
 @media(prefers-color-scheme:dark){.lgw{background:#000}.lgtop{color:#fff}.lgtop .nest path{stroke-width:.7px;stroke-opacity:.78}.lgtop .nest ellipse{stroke:#000;stroke-width:.8px}}
 </style></head><body>
 <div id="bg"></div><div id="app"></div><nav id="nav"></nav><div id="md" onclick="if(event.target==this)closeM()"><div id="sh"></div></div><div id="toast"></div>
+<script src="supabase.js"></script>
 <script>
 const $=s=>document.querySelector(s),pad=n=>String(n).padStart(2,'0'),iso=d=>d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate()),TODAY=()=>iso(new Date());
 const esc=s=>String(s).replace(/[&<>"']/g,c=>'&#'+c.charCodeAt(0)+';'),pick=a=>a[Math.random()*a.length|0];
 const ls=(k,v)=>{try{if(v===undefined)return JSON.parse(localStorage.getItem(k));localStorage.setItem(k,JSON.stringify(v))}catch(e){return null}};
-let U,D,tab='t',sel=TODAY(),cm=new Date(),mode='in',last='',ft,fc=0,fp='m',fd='',fr=0,lk=0,sh='all',sdx=6;
-const save=()=>ls('fs2_d_'+U,D),blank=()=>({w:0,ml:[0,0,0],md:{},ex:[],mood:0,sy:[],ev:[],nt:'',hr:{},fg:0,sn:0,bs:[],bo:[]});
+let UID=null,U,D,tab='t',sel=TODAY(),cm=new Date(),mode='in',last='',ft,fc=0,fp='m',fd='',fr=0,lk=0,sh='all',sdx=6;
+const blank=()=>({w:0,ml:[0,0,0],md:{},ex:[],mood:0,sy:[],ev:[],nt:'',hr:{},fg:0,sn:0,bs:[],bo:[]});
 const rd=d=>Object.assign(blank(),D.days[d]),day=(d=TODAY())=>{const x=D.days[d]||(D.days[d]={}),b=blank();for(const k in b)if(x[k]===undefined)x[k]=b[k];return x};
 const CT=[['🏠','Cotidiano'],['🩺','Saúde'],['🧺','Casa'],['🙆','Pessoal'],['💻','Trabalho'],['💰','Finanças']],PR={b:['Baixa','--bl',5],m:['Média','--md',10],a:['Alta','--al',15]};
 const MS=[['☕','Café'],['🥗','Almoço'],['🍲','Janta']],MO=['😫','☹️','😐','🙂','🥰'],WK=['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
@@ -212,18 +217,73 @@ function toast(m){const t=$('#toast');t.textContent=m;t.classList.add('s');clear
 function burst(x,y,n=14){if(!D.cfg.fx)return;for(let i=0;i<n;i++){const s=document.createElement('i'),a=Math.random()*6.28,d=50+Math.random()*90;s.className='c';s.style.cssText=`left:${x}px;top:${y}px;background:${['#000000','#e6e2d3','#5e5e5e','#c9c4b0'][i%4]};--dx:${Math.cos(a)*d}px;--dy:${Math.sin(a)*d-30}px;--r:${Math.random()*360}deg`;document.body.appendChild(s);setTimeout(()=>s.remove(),950)}}
 function gain(n,p,m,s){const a=lv();D.xp=Math.max(0,D.xp+n);if(n<0)return snd('t');vibr();snd(s||'ok');p&&burst(...p);toast(lv()>a?`Nível ${lv()} desbloqueado ✦`:`+${n} ✦ ${m||pick(MSG)}`)}
 /* Login */
+/* Nuvem (Supabase): cada pessoa tem um ninho só dela */
+const SB_URL='https://nsjissvwnhaoyaqinzqp.supabase.co',SB_KEY='sb_publishable_a4_5xhZAn9NhGWV5SGTw3w_pwyZFIrN',GOOGLE=false;
+const sb=window.supabase?supabase.createClient(SB_URL,SB_KEY):null,back=()=>location.origin+location.pathname;
+let syncT,dirty=0;
+const kD=()=>'ninho_d_'+UID,kX=()=>'ninho_dirty_'+UID,kA=()=>'ninho_at_'+UID;
+const save=()=>{if(!UID)return;ls(kD(),D);dirty=1;ls(kX(),1);clearTimeout(syncT);syncT=setTimeout(push,1200)};
+async function push(){clearTimeout(syncT);if(!UID||!dirty||!navigator.onLine)return;const id=UID,at=new Date().toISOString();
+try{const{error}=await sb.from('ninhos').upsert({user_id:id,dados:D,atualizado_em:at});if(!error&&UID==id){dirty=0;ls(kX(),0);ls(kA(),Date.parse(at))}}catch(e){}}
+async function fetchR(){try{const{data,error}=await sb.from('ninhos').select('dados,atualizado_em').eq('user_id',UID).maybeSingle();return error?{err:error}:{data}}catch(e){return{err:e}}}
+async function sync(){if(!UID||!navigator.onLine)return;if(dirty)return push();const id=UID,r=await fetchR();if(r.err||UID!=id||dirty)return;
+if(!r.data){dirty=1;return push()}const at=Date.parse(r.data.atualizado_em);if(at===ls(kA()))return;
+ls(kD(),r.data.dados);ls(kA(),at);if(!$('#md').classList.contains('s'))boot(U,0,r.data.dados)}
+document.addEventListener('visibilitychange',()=>{if(!UID)return;document.hidden?push():sync()});
+addEventListener('online',()=>UID&&sync());addEventListener('pagehide',()=>UID&&push());
 const hs=async(u,p)=>{try{const b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode('fs:'+u+':'+p));return[...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,'0')).join('')}catch(e){return btoa(u+':'+p)}};
-function auth(){$('#nav').innerHTML='';$('#bg').innerHTML='';$('#bg').dataset.k='';const av=$('#avb');av&&av.remove();const h=new Date().getHours(),gr=h<5?'Boa noite':h<12?'Bom dia':h<18?'Boa tarde':'Boa noite',up=mode=='up';
-$('#app').innerHTML=`<div class="lgw"><div class="lgtop"><h1>${up?'Boas-vindas ao Ninho.':gr+'.'}</h1><p>${up?'Um cantinho calmo para fazer o que dá, no seu tempo.':'Que bom te ver de novo. Seu ninho está do jeitinho que você deixou.'}</p></div><div class="lgs"><h2>${up?'Criar conta':'Entrar'}</h2><label for="u">Usuário</label><div class="fi2">${svg('<circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"/>')}<input id="u" placeholder="Como você quer entrar" autocomplete="username" autocapitalize="none"></div><label for="p">Senha</label><div class="fi2">${svg('<rect x="5" y="11" width="14" height="10" rx="3"/><path d="M8 11V8a4 4 0 018 0v3"/>')}<input id="p" type="password" placeholder="${up?'Pelo menos 4 caracteres':'Sua senha'}" autocomplete="${up?'new-password':'current-password'}" onkeydown="if(event.key=='Enter')go()"></div><p id="er" class="sm" role="alert" style="min-height:18px;margin:0 4px 8px"></p><button class="lgb" onclick="go()">${up?'Criar meu ninho':'Entrar'}</button><p class="lgl">${up?'Já tem conta?':'Ainda não tem conta?'} <button onclick="mode=mode=='in'?'up':'in';auth()">${up?'Entrar':'Criar conta'}</button></p></div></div>`}
+function auth(msg,ok){$('#nav').innerHTML='';$('#bg').innerHTML='';$('#bg').dataset.k='';const av=$('#avb');av&&av.remove();const h=new Date().getHours(),gr=h<5?'Boa noite':h<12?'Bom dia':h<18?'Boa tarde':'Boa noite',m=mode,up=m=='up';
+const T={in:'Entrar',up:'Criar conta',link:'Entrar sem senha',rec:'Recuperar senha',np:'Nova senha'}[m],B={in:'Entrar',up:'Criar meu ninho',link:'Enviar link de acesso',rec:'Enviar link de recuperação',np:'Salvar nova senha'}[m];
+const em=m!='np',pw=m=='in'||m=='up'||m=='np',sv=$('#em')?$('#em').value:'',sw=k=>`mode='${k}';auth()`;
+const I=(id,lb,ic,ex)=>`<label for="${id}">${lb}</label><div class="fi2">${svg(ic)}<input id="${id}" ${ex}></div>`,MAIL='<rect x="3" y="5" width="18" height="14" rx="3"/><path d="M4 7l8 6 8-6"/>',LOCK='<rect x="5" y="11" width="14" height="10" rx="3"/><path d="M8 11V8a4 4 0 018 0v3"/>';
+const sub={link:'Vamos enviar um link para o seu e-mail. É só tocar nele para entrar.',rec:'Vamos enviar um link para você criar uma senha nova.',np:'Escolha a sua nova senha.'}[m];
+$('#app').innerHTML=`<div class="lgw"><div class="lgtop"><h1>${up?'Boas-vindas ao Ninho.':gr+'.'}</h1><p>${up?'Um cantinho calmo para fazer o que dá, no seu tempo.':'Que bom te ver de novo. Seu ninho está do jeitinho que você deixou.'}</p></div><div class="lgs"><h2>${T}</h2>${sub?`<p class="sm" style="margin:-8px 4px 16px">${sub}</p>`:''}
+${GOOGLE&&(m=='in'||m=='up')?`<button class="lgg" onclick="gGo()"><svg viewBox="0 0 24 24"><path fill="#4285F4" d="M23.5 12.3c0-.8-.1-1.6-.2-2.3H12v4.4h6.5a5.6 5.6 0 01-2.4 3.6v3h3.9c2.3-2.1 3.5-5.2 3.5-8.7z"/><path fill="#34A853" d="M12 24c3.2 0 6-1.1 8-2.9l-3.9-3c-1.1.7-2.5 1.2-4.1 1.2-3.1 0-5.8-2.1-6.7-5H1.3v3.1A12 12 0 0012 24z"/><path fill="#FBBC05" d="M5.3 14.3a7.2 7.2 0 010-4.6V6.6H1.3a12 12 0 000 10.8z"/><path fill="#EA4335" d="M12 4.8c1.8 0 3.3.6 4.6 1.8l3.4-3.4A12 12 0 001.3 6.6l4 3.1c.9-2.8 3.6-4.9 6.7-4.9z"/></svg> Continuar com Google</button><div class="lgo">ou com e-mail</div>`:''}
+${em?I('em','E-mail',MAIL,`type="email" placeholder="voce@email.com" autocomplete="email" autocapitalize="none" value="${esc(sv)}" onkeydown="if(event.key=='Enter')go()"`):''}
+${pw?I('p',m=='np'?'Nova senha':'Senha',LOCK,`type="password" placeholder="${m=='in'?'Sua senha':'Pelo menos 6 caracteres'}" autocomplete="${m=='in'?'current-password':'new-password'}" onkeydown="if(event.key=='Enter')go()"`):''}
+<p id="er" class="sm${ok?' ok':''}" role="alert" style="min-height:18px;margin:0 4px 8px">${msg?esc(msg):''}</p><button class="lgb" id="gob" onclick="go()">${B}</button>
+<div class="lgx">${m=='in'?`<button onclick="${sw('link')}">Prefere sem senha? Receber link por e-mail</button><button onclick="${sw('rec')}">Esqueci minha senha</button>`:m=='np'?'':`<button onclick="${sw('in')}">Voltar para entrar com senha</button>`}</div>
+${m=='in'||m=='up'?`<p class="lgl">${up?'Já tem conta?':'Ainda não tem conta?'} <button onclick="${sw(up?'in':'up')}">${up?'Entrar':'Criar conta'}</button></p>`:''}</div></div>`}
+const ERR=e=>{const t=((e&&e.message)||'')+'',c=e&&e.code;
+if(/invalid login|invalid_credentials/i.test(t+c))return'E-mail ou senha incorretos.';
+if(/not confirmed/i.test(t))return'Falta confirmar o seu e-mail: toque no link que enviamos.';
+if(/already registered|already exists/i.test(t))return'Esse e-mail já tem conta. Tente entrar.';
+if(/signups? not allowed|signup.*disabled|otp_disabled/i.test(t+c))return'O Ninho está só para convidados. Peça um convite.';
+if(/rate limit|too many|security purposes/i.test(t)||(e&&e.status==429))return'Muitos e-mails em pouco tempo. Espere alguns minutos e tente de novo.';
+if(/password.*(6|characters|short)|weak/i.test(t))return'A senha precisa ter pelo menos 6 caracteres.';
+if(/same.*password|different from the old/i.test(t))return'A nova senha precisa ser diferente da antiga.';
+if(/fetch|network|load failed/i.test(t)||!navigator.onLine)return'Sem conexão. Verifique a internet e tente de novo.';
+return'Não deu certo agora. Tente de novo. ('+t+')'};
+async function go(){const m=mode,e=$('#em')?$('#em').value.trim().toLowerCase():'',p=$('#p')?$('#p').value:'',b=$('#gob'),er=(x,ok)=>{const n=$('#er');n.textContent=x;n.className='sm'+(ok?' ok':'')};
+if(m!='np'&&!/^\S+@\S+\.\S+$/.test(e))return er('Digite um e-mail válido.');if((m=='up'||m=='np')&&p.length<6)return er('A senha precisa ter pelo menos 6 caracteres.');if(m=='in'&&!p)return er('Digite a sua senha.');
+b.disabled=true;b.style.opacity=.6;er('Um instante…',1);let r;
+try{if(m=='in')r=await sb.auth.signInWithPassword({email:e,password:p});
+else if(m=='up')r=await sb.auth.signUp({email:e,password:p,options:{emailRedirectTo:back()}});
+else if(m=='link')r=await sb.auth.signInWithOtp({email:e,options:{emailRedirectTo:back()}});
+else if(m=='rec')r=await sb.auth.resetPasswordForEmail(e,{redirectTo:back()});
+else r=await sb.auth.updateUser({password:p})}catch(x){r={error:x}}
+b.disabled=false;b.style.opacity='';if(r.error)return er(ERR(r.error));
+if(m=='in')return;if(m=='up'){if(r.data&&r.data.session)return;if(r.data&&r.data.user&&r.data.user.identities&&!r.data.user.identities.length)return er('Esse e-mail já tem conta. Tente entrar.');return er('Quase lá! Enviamos um link de confirmação para '+e+'. Toque nele para abrir o seu ninho.',1)}
+if(m=='link')return er('Pronto! Enviamos um link para '+e+'. Abra o e-mail neste aparelho e toque no link.',1);
+if(m=='rec')return er('Enviamos um link para '+e+'. Toque nele para criar uma senha nova.',1);
+mode='in';toast('Senha alterada ✦');const{data:{session:s}}=await sb.auth.getSession();s?start(s,1):auth()}
+function gGo(){sb.auth.signInWithOAuth({provider:'google',options:{redirectTo:back()}}).then(r=>r.error&&auth(ERR(r.error)))}
+function wait(t,btn){$('#nav').innerHTML='';$('#app').innerHTML=`<div class="card" style="margin-top:40vh;text-align:center"><p class="sm" style="margin:0">${t}</p>${btn||''}</div>`}
+async function start(s,g){const id=s.user.id;if(UID===id)return;UID=id;U=(s.user.email||'você').split('@')[0];dirty=ls(kX())?1:0;const loc=ls(kD());
+if(loc){boot(U,g,loc);sync()}else{wait('Abrindo o seu ninho…');const r=await fetchR();if(UID!==id)return;
+if(r.err){UID=null;return wait(navigator.onLine?'Não consegui abrir o seu ninho agora.':'Sem internet. Conecte-se para abrir o seu ninho pela primeira vez neste aparelho.','<button class="sgb w" onclick="init()">Tentar de novo</button>')}
+if(r.data){ls(kD(),r.data.dados);ls(kA(),Date.parse(r.data.atualizado_em))}boot(U,g,r.data?r.data.dados:{})}
+if(!D.cfg.email&&s.user.email){D.cfg.email=s.user.email;save()}}
+let inited=0;async function init(){if(!sb)return wait('Não consegui carregar o Ninho. Verifique a internet e recarregue a página.');
+const q=new URLSearchParams(location.hash.slice(1)+'&'+location.search.slice(1)),ue=q.get('error_description');if(ue)history.replaceState(null,'',back());
+if(!inited){inited=1;sb.auth.onAuthStateChange((ev,s)=>setTimeout(()=>{if(ev=='PASSWORD_RECOVERY'){UID=null;mode='np';return auth()}if(ev=='SIGNED_IN'&&s&&mode!='np')start(s,1);if(ev=='SIGNED_OUT'&&UID){UID=null;mode='in';auth()}}))}
+const{data:{session:s}}=await sb.auth.getSession();if(mode=='np')return;if(s)start(s,1);else auth(ue?(/expired|invalid/i.test(ue)?'Esse link expirou ou já foi usado. Peça um novo.':ue):'')}
 function authOld(){$('#nav').innerHTML='';$('#bg').innerHTML='';$('#bg').dataset.k='';const av=$('#avb');av&&av.remove();$('#app').innerHTML=`<div class="card" style="margin-top:24px;padding-bottom:10px"><div class="marca">Ninho.</div><h1>Mantenha a mente<b>leve</b></h1></div><div class="card"><input id="u" placeholder="Usuário" autocomplete="username"><div style="height:10px"></div><input id="p" type="password" placeholder="Senha" autocomplete="current-password" onkeydown="if(event.key=='Enter')go()"><p id="er" class="sm" style="min-height:22px;margin:10px 4px"></p><button class="sgb w" style="margin:0" onclick="go()">${mode=='in'?'Entrar':'Criar conta'}</button><p style="text-align:center;margin:16px 0 0"><button class="gb" onclick="mode=mode=='in'?'up':'in';auth()">${mode=='in'?'Criar uma conta':'Já tenho conta'}</button></p></div>`}
-async function go(){const u=$('#u').value.trim().toLowerCase(),p=$('#p').value,us=ls('fs_u')||{},er=m=>$('#er').textContent=m;
-if(u.length<2||p.length<4)return er('Use 2+ caracteres no usuário e 4+ na senha.');const h=await hs(u,p);
-if(mode=='up'){if(us[u])return er('Esse usuário já existe. Escolha outro.');us[u]=h;ls('fs_u',us)}else if(us[u]!==h)return er('Usuário ou senha incorretos.');
-ls('fs_s',u);boot(u,1)}
-function boot(u,g){U=u;D=Object.assign({tasks:[],days:{},meds:[],ev:[],xp:0,id:1,sp:0,fx:[],hr:[],lab:[],rw:[{id:1,t:'Comprar um livro novo',c:10},{id:2,t:'Pedir uma comidinha gostosa',c:5},{id:3,t:'30 minutos de descanso sem culpa',c:3}]},ls('fs2_d_'+u)||{});D.cfg=Object.assign({snd:1,vib:1,fx:1,goal:8,photo:'',nick:'',email:'',bd:''},D.cfg);tab='t';fd='';spawn();if(!D.evs){['Dormi bem','Dormi mal','Social','Trabalho/estudo','Discussão','Tempo ao ar livre','Muito café','Tela demais','Procrastinação','Hiperfoco','Notícia ruim','Conquista'].forEach(n=>D.ev.includes(n)||D.ev.push(n));D.evs=1;save()}if(!D.exm){D.meds.push({n:'Vitamina D · 5 gotas (exemplo)',h:'08:00',f:'gotas'},{n:'Comprimido (exemplo) 10mg',h:'09:00',f:'comp'},{n:'Gel ou creme (exemplo)',h:'21:00',f:'gel'},{n:'Injeção (exemplo)',h:'20:00',f:'inj'});D.hr.push({id:Date.now(),n:'Adesivo de reposição (exemplo)',h:'08:00',iv:3,d:TODAY(),f:'adesivo'});D.exm=1;save()}
+function boot(u,g,dd){U=u;D=Object.assign({tasks:[],days:{},meds:[],ev:[],xp:0,id:1,sp:0,fx:[],hr:[],lab:[],rw:[{id:1,t:'Comprar um livro novo',c:10},{id:2,t:'Pedir uma comidinha gostosa',c:5},{id:3,t:'30 minutos de descanso sem culpa',c:3}]},dd||{});D.cfg=Object.assign({snd:1,vib:1,fx:1,goal:8,photo:'',nick:'',email:'',bd:''},D.cfg);tab='t';fd='';spawn();if(!D.evs){['Dormi bem','Dormi mal','Social','Trabalho/estudo','Discussão','Tempo ao ar livre','Muito café','Tela demais','Procrastinação','Hiperfoco','Notícia ruim','Conquista'].forEach(n=>D.ev.includes(n)||D.ev.push(n));D.evs=1;save()}if(!D.exm){D.meds.push({n:'Vitamina D · 5 gotas (exemplo)',h:'08:00',f:'gotas'},{n:'Comprimido (exemplo) 10mg',h:'09:00',f:'comp'},{n:'Gel ou creme (exemplo)',h:'21:00',f:'gel'},{n:'Injeção (exemplo)',h:'20:00',f:'inj'});D.hr.push({id:Date.now(),n:'Adesivo de reposição (exemplo)',h:'08:00',iv:3,d:TODAY(),f:'adesivo'});D.exm=1;save()}
 $('#app').innerHTML='<div id="pg"><div id="hd"></div><div id="gl"></div><div id="v"></div></div>';
 $('#nav').innerHTML=[['t','Tarefas'],['h','Saúde'],['c','Agenda'],['d','Diário'],['s','Stats']].map(([k,l])=>`<button data-k="${k}" onclick="go2('${k}')" aria-label="${l}">${svg(IC[k])}${l}</button>`).join('');render();hiS(g)}
-function out(){localStorage.removeItem('fs_s');closeM();auth()}
+async function out(){await push();if(dirty&&!confirm('Você está sem internet e algumas mudanças ainda não foram salvas na nuvem. Sair mesmo assim e perder essas mudanças?'))return;
+[kD(),kX(),kA()].forEach(k=>localStorage.removeItem(k));UID=null;dirty=0;closeM();mode='in';await sb.auth.signOut().catch(()=>{});auth()}
 const avS=()=>D.cfg.av>=0?'background:#e6e2d3;overflow:hidden':D.cfg.photo?`background-image:url(${D.cfg.photo})`:'',avT=()=>D.cfg.av>=0?avSvg(D.cfg.av):D.cfg.photo?'':esc((D.cfg.nick||U)[0].toUpperCase());
 const FR=['Um passo de cada vez.','Termine uma coisinha e o resto fica mais leve.','Ficou algo para trás? Tudo bem.','Seu ritmo também é ritmo.','Respira. Você está indo bem.','Feito é melhor que perfeito.','Hoje pode ser mais leve.'];
 const hdr=t=>{const n=new Date();return`<div class="hd"><div><div class="gr">${n.toLocaleDateString('pt-BR',{weekday:'long',day:'numeric',month:'long'})}</div><h1>${t}</h1></div><button class="av" style="${avS()}" onclick="prof()" aria-label="Perfil">${avT()}</button></div>`};
@@ -326,8 +386,8 @@ function dR(j){D.rw.splice(j,1);save();$('#rl').innerHTML=rwL()}
 function rdm(id,e){const r=D.rw.find(x=>x.id==id),p=ctr(e);if(!r||bal()<r.c)return;D.sp+=r.c;r.n=(r.n||0)+1;save();snd('ok');vibr();burst(...p,26);toast('Aproveite sem culpa: '+r.t+' ✦');render(1);if($('#md').classList.contains('s'))prof();const b=$('#pb');if(b)b.innerHTML=rwV()}
 /* Perfil: segurança e dados */
 const fld=(k,l,t='text',ph='')=>`<div class="st"><div class="sm" style="margin-bottom:6px">${l}</div><input type="${t}" value="${esc(D.cfg[k]||'')}" placeholder="${ph}" onchange="D.cfg.${k}=this.value.trim();save()"></div>`;
-function pwM(){scr('Alterar senha',`<div class="card"><input id="p0" type="password" placeholder="Senha atual" autocomplete="current-password"><div style="height:10px"></div><input id="p1" type="password" placeholder="Nova senha (4+ caracteres)" autocomplete="new-password"><div style="height:10px"></div><input id="p2" type="password" placeholder="Repita a nova senha" autocomplete="new-password"><p id="pe" class="sm" style="min-height:22px;margin:10px 4px"></p><button class="sgb w" style="margin:0" onclick="pwS()">Salvar nova senha</button></div>`,'infoS()')}
-async function pwS(){const us=ls('fs_u')||{},e=m=>$('#pe').textContent=m,n=$('#p1').value;if(await hs(U,$('#p0').value)!==us[U])return e('A senha atual está incorreta.');if(n.length<4)return e('A nova senha precisa ter 4+ caracteres.');if(n!==$('#p2').value)return e('As senhas não conferem.');us[U]=await hs(U,n);ls('fs_u',us);toast('Senha alterada ✦');infoS()}
+function pwM(){scr('Alterar senha',`<div class="card"><p class="sm" style="margin-top:0">Se você entra com Google ou com link por e-mail, aqui você também pode criar uma senha.</p><input id="p1" type="password" placeholder="Nova senha (6+ caracteres)" autocomplete="new-password"><div style="height:10px"></div><input id="p2" type="password" placeholder="Repita a nova senha" autocomplete="new-password"><p id="pe" class="sm" style="min-height:22px;margin:10px 4px"></p><button class="sgb w" style="margin:0" onclick="pwS()">Salvar nova senha</button></div>`,'infoS()')}
+async function pwS(){const e=m=>$('#pe').textContent=m,n=$('#p1').value;if(n.length<6)return e('A nova senha precisa ter 6+ caracteres.');if(n!==$('#p2').value)return e('As senhas não conferem.');e('Um instante…');const{error}=await sb.auth.updateUser({password:n}).catch(x=>({error:x}));if(error)return e(ERR(error));toast('Senha alterada ✦');infoS()}
 function calM(){scr('Conectar calendário',`<div class="card"><p class="sm" style="margin-top:0;opacity:.85">A sincronização ao vivo com Google Agenda e Apple Calendário precisa de um servidor para o login seguro e ainda não está ativa nesta versão. Por enquanto, baixe suas tarefas e importe no app de agenda que você usa.</p><button class="sgb w" onclick="ics()">Baixar agenda (.ics)</button></div>`,'dataS()')}
 function csv(){const ids=[...new Set([...Object.keys(D.days),...D.tasks.flatMap(t=>[t.d,t.dt].filter(Boolean))])].sort(),q=s=>'"'+String(s).replace(/"/g,'""')+'"',R=[['data','humor','copos_agua','refeicoes','remedios_tomados','remedios_total','exercicios','sintomas','eventos','notas','tarefas_feitas','tarefas_total','fogachos','suores_noturnos']];
 ids.forEach(id=>{const d=rd(id),t=tdy(id);R.push([id,d.mood||'',d.w,d.ml.filter(x=>x).length,D.meds.filter(m=>d.md[m.n]).length,D.meds.length,d.ex.map(x=>x.t).join('; '),d.sy.join('; '),d.ev.join('; '),d.nt,t.filter(x=>x.x).length,t.length,+(d.bs||[]).includes('Fogachos'),+(d.bs||[]).includes('Suor noturno')])});
@@ -446,5 +506,5 @@ $('#avd').innerHTML=avDots();avAnn();snd('t')}
 function avKey(e){if(e.key=='Escape'){e.preventDefault();avX()}else if(e.key=='ArrowLeft')avGo(-1);else if(e.key=='ArrowRight')avGo(1);else if(e.key=='Tab'){const f=[...$('#avp').querySelectorAll('button')],i=f.indexOf(document.activeElement);e.preventDefault();f[(i+(e.shiftKey?-1:1)+f.length)%f.length].focus()}}
 function avX(){const o=$('#avp');if(!o)return;o.classList.add('o');setTimeout(()=>o.remove(),300);avPrev&&avPrev.focus&&avPrev.focus()}
 function avOk(){$('#avim').animate([{transform:'scale(1)'},{transform:'scale(1.06)'},{transform:'scale(1)'}],{duration:320,easing:'ease-out'});D.cfg.av=avI;save();snd('ok');setTimeout(()=>{avX();render(1);if($('#md').classList.contains('s'))prof()},340)}
-const s0=ls('fs_s');s0&&(ls('fs_u')||{})[s0]?boot(s0):auth();
+init();
 </script></body></html>
