@@ -24,11 +24,18 @@ uma linha por pessoa, protegida por RLS — cada conta só lê e grava o própri
 
 - Na tela: e-mail + senha e "Esqueci minha senha".
 - Link mágico por e-mail: pronto no código, mas sem botão na tela por enquanto.
-- Google: pronto no código, desligado (`GOOGLE=false` no `index.html`) até o
-  provedor Google ser configurado no Supabase.
+- Google: o botão aparece sozinho quando o provedor Google está ligado no Supabase
+  (o app consulta `/auth/v1/settings` ao abrir).
 
 `supabase.js` é a biblioteca oficial `@supabase/supabase-js` (build UMD), guardada no
 repositório para o app não depender de CDN.
 
 A chave `sb_publishable_...` no código é pública por natureza; a segurança vem das
 regras RLS da tabela.
+
+## Prévia no Claude (artifact)
+
+O artifact "Ninho (versão do site)" é uma cópia do `index.html` com
+`window.NINHO_PREVIEW=1`: abre sem login e guarda os dados só naquele navegador,
+porque artifacts não podem se conectar ao Supabase. Downloads (planilha, .ics) não
+funcionam ali. O original continua sendo este repositório.

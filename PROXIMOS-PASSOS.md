@@ -3,10 +3,10 @@
 Lista viva do que ficou combinado. Marque com `[x]` o que for concluído.
 
 ## 1. Pendências agora (rápidas, só você)
-- [ ] Fazer o merge do PR #3 (tela de login menor + mensagem de erro melhor)
-- [ ] Supabase → Authentication → URL Configuration: trocar o **Site URL** para
+- [x] Fazer o merge do PR #3 (tela de login menor + mensagem de erro melhor)
+- [x] Supabase → Authentication → URL Configuration: trocar o **Site URL** para
       `https://gabrielelimacst-ship-it.github.io/Ninho/` e adicionar o mesmo em **Redirect URLs**
-- [ ] Entrar no app com e-mail e senha (a conta já deve estar confirmada)
+- [x] Entrar no app com e-mail e senha (a conta já deve estar confirmada)
 - [ ] Testar a sincronização: anotar algo no celular e conferir no computador
 - [ ] Decidir: qualquer pessoa pode criar conta **ou** só convidados
       (Authentication → Sign In / Providers → "Allow new users to sign up")
@@ -25,11 +25,12 @@ Lista viva do que ficou combinado. Marque com `[x]` o que for concluído.
 ## 4. Sugestões para depois
 - [ ] Ícone e nome próprios ao adicionar à Tela de Início do celular
 - [ ] Endereço próprio (ex.: `meuninho.com.br`) — opcional, ~R$ 40/ano
-- [ ] Avisar quando o mesmo ninho for mudado em dois aparelhos ao mesmo tempo
-      (hoje vale a última alteração enviada)
-- [ ] Revisar a tela "Conectar calendário", que ainda fala que precisa de servidor
-- [ ] Decidir o papel do artifact "Ninho." no Claude: hoje o original é o GitHub,
-      e o artifact está desatualizado
+- [x] Avisar quando o mesmo ninho for mudado em dois aparelhos ao mesmo tempo
+- [ ] (Melhoria) Juntar automaticamente as duas versões em vez de escolher uma
+- [x] Seção "Conexões e dados" (planilha, Apple Calendário, Google Agenda, Google)
+- [ ] Sincronização automática dos calendários (assinatura de agenda que se atualiza sozinha)
+- [x] Artifact "Ninho (versão do site)" em modo prévia (sem login, dados só no navegador)
+- [ ] Decidir se apaga o artifact antigo "Ninho."
 
 ## Lembretes
 - No iPhone, pelo ícone da Tela de Início, entre com **e-mail e senha**
