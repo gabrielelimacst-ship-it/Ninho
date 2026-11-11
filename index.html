@@ -185,6 +185,31 @@ nav button.on{background:var(--mf);color:#000;opacity:1}
 #er.ok{color:var(--sg)}
 .lgl{text-align:center;font-size:12px;color:var(--m2);margin:8px 0 0}.lgl button{background:none;color:var(--t1);font-weight:600;text-decoration:underline;text-underline-offset:3px;padding:0}
 @media(prefers-color-scheme:dark){.lgw{background:#000}.lgtop{color:#fff}.lgtop .nest path{stroke-width:.7px;stroke-opacity:.78}.lgtop .nest ellipse{stroke:#000;stroke-width:.8px}}
+
+/* Revisão geral: uma escala só de tamanhos e espaços
+   legenda 12.5 · texto 15 · campos 16 (o iPhone dá zoom abaixo disso) · títulos de popup 17 */
+.sm,.lis{font-size:12.5px;line-height:1.45}
+.li,.mr,#sh .mr{font-size:15px!important;font-weight:500;line-height:1.35}
+.mr .sm{margin-top:3px}
+.lb{font-size:11.5px;letter-spacing:.08em}
+input,textarea{font-size:16px;line-height:1.3}
+#sh input,#sh textarea{padding:13px 16px;border-radius:16px;min-height:50px}
+#sh .fi2 input{padding-left:40px}
+input[type=time],input[type=date],input[type=number]{-webkit-appearance:none;appearance:none;min-height:50px;text-align:left}
+.sgb,.bt,.lgb{font-size:15px!important;font-weight:600;letter-spacing:0;text-transform:none;border-radius:99px;padding:14px 20px;min-height:50px;line-height:1.2}
+.gb{font-size:13px;letter-spacing:.02em;text-transform:none;border-radius:99px;padding:9px 16px}
+#sh>.row b{font-size:17px!important;font-weight:600}
+#sh .card{padding:16px}
+#sh .card>*+*{margin-top:10px}
+#sh .card>.sm:first-child,#sh .card>p:first-child{margin-top:0}
+#sh .row{gap:10px}#sh .row>input{flex:1;min-width:0}#sh .row>input[type=number]{flex:0 0 76px}
+#sh .chips{flex-wrap:wrap;overflow:visible;gap:8px;margin:12px 0}
+#sh .chip{font-size:12px;padding:9px 14px}
+#sh .x{font-size:20px;padding:6px 4px 6px 12px;opacity:.5}
+#sh .st .sm{margin:0 4px 6px}
+.sw.on i{background:var(--ta,#fff)}
+#sh .rb{width:44px;height:44px;font-size:20px}
+#sh .st{font-size:15px}#sh .st>.sm{font-size:12.5px}
 </style></head><body>
 <div id="bg"></div><div id="app"></div><nav id="nav"></nav><div id="md" onclick="if(event.target==this)mdBack()"><div id="sh"></div></div><div id="toast"></div>
 <script src="supabase.js"></script>
@@ -432,8 +457,8 @@ lab=LB.map((l,k)=>{const v=[...D.lab].filter(x=>x.k==k).sort((a,b)=>a.d<b.d?1:-1
 return`<div class="lb2">🌸 Reposição hormonal</div>`+A(`<div class="lb">Doses de hoje</div>${doses}`,`<div class="lb">Sintomas no corpo</div><div class="chips w" style="margin:0">${BS.map(([e,n],i)=>chip('bs',i,e,n,d)).join('')}</div>`,`<div class="row sp"><div class="lb" style="margin:0">Exames hormonais</div><button class="gb" onclick="labS()">Registrar</button></div>${lab.map(x=>`<p class="sm" style="margin:8px 0 0">Último — ${x}</p>`).join('')||'<p class="sm">Registre estradiol, FSH, LH ou testosterona para acompanhar a tendência.</p>'}`)}
 function hrT(id,e){const d=day(),p=ctr(e);d.hr[id]=!d.hr[id];last='h'+id;snd(d.hr[id]?((D.hr.find(h=>h.id==id)||{}).f||'comp'):'t');conf('h'+id,d.hr[id],5,e.currentTarget);save();render(1)}
 const hrL=()=>D.hr.map((h,j)=>`<div class="mr"><div>${FM[h.f||'comp'][0]} ${esc(h.n)}<div class="sm">${h.h||'sem horário'} · a cada ${h.iv} dia(s) · desde ${new Date(h.d+'T12:00').toLocaleDateString('pt-BR')}</div></div><button class="x" onclick="dH(${j})" aria-label="Remover">×</button></div>`).join('')||'<p class="sm">Nenhum item cadastrado.</p>';
-function hrS(){mf='adesivo';scr('Reposição hormonal',`<div class="card"><div id="hl">${hrL()}</div></div><div class="card"><input id="hn" placeholder="Nome, dose e via (ex.: adesivo 50mcg)"><div class="chips" id="fc2">${fch()}</div><div class="row"><input id="hh" type="time"><input id="hi" type="number" min="1" max="30" value="1" aria-label="A cada quantos dias" style="width:76px"><span class="sm">dia(s)</span></div><div class="sm" style="margin:10px 4px 6px">Início do ciclo</div><input id="hdt" type="date" value="${TODAY()}"><button class="sgb w" onclick="addH()">Adicionar</button></div>`,'regS()')}
-function addH(){const n=$('#hn').value.trim();if(!n)return;D.hr.push({id:Date.now(),n,h:$('#hh').value,f:mf,iv:Math.max(1,Math.min(30,+$('#hi').value||1)),d:$('#hdt').value||TODAY()});save();snd('t');$('#hl').innerHTML=hrL();$('#hn').value=''}
+function hrS(){mf='adesivo';scr('Reposição hormonal',`<div class="card"><div id="hl">${hrL()}</div></div><div class="card"><input id="hn" placeholder="Nome, dose e via (ex.: adesivo 50mcg)"><div class="chips" id="fc2">${fch()}</div><div class="row"><input id="hh" type="time"><input id="hiv" type="number" min="1" max="30" value="1" aria-label="A cada quantos dias" style="width:76px"><span class="sm">dia(s)</span></div><div class="sm" style="margin:10px 4px 6px">Início do ciclo</div><input id="hdt" type="date" value="${TODAY()}"><button class="sgb w" onclick="addH()">Adicionar</button></div>`,'regS()')}
+function addH(){const n=$('#hn').value.trim();if(!n)return;D.hr.push({id:Date.now(),n,h:$('#hh').value,f:mf,iv:Math.max(1,Math.min(30,+$('#hiv').value||1)),d:$('#hdt').value||TODAY()});save();snd('t');$('#hl').innerHTML=hrL();$('#hn').value=''}
 function dH(j){D.hr.splice(j,1);save();$('#hl').innerHTML=hrL()}
 const labL=()=>[...D.lab].sort((a,b)=>a.d<b.d?1:-1).slice(0,12).map(x=>`<div class="mr"><div>${LB[x.k][0]}: ${x.v} ${esc(x.u||LB[x.k][1])}<div class="sm">${new Date(x.d+'T12:00').toLocaleDateString('pt-BR')}</div></div><button class="x" onclick="dLb(${x.id})" aria-label="Remover">×</button></div>`).join('')||'<p class="sm">Nenhum exame registrado.</p>';
 function labS(){scr('Exames hormonais',`<div class="card"><div class="chips" id="lc" style="margin-top:0">${LB.map((l,i)=>`<button class="chip ${i==lk?'on':''}" onclick="lkS(${i})">${l[0]}</button>`).join('')}</div><input id="lv" type="number" step="any" inputmode="decimal" placeholder="Valor"><div class="row" style="margin:10px 0"><input id="lu" placeholder="Unidade" value="${LB[lk][1]}"><input id="ld" type="date" value="${TODAY()}"></div><button class="sgb w" onclick="addL()">Salvar exame</button></div><div class="card"><div id="ll">${labL()}</div><p class="sm">Use a unidade do seu laudo e compare com os valores de referência do laboratório. Converse com sua equipe médica sobre as tendências.</p></div>`,'closeM()')}
