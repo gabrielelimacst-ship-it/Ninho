@@ -16,15 +16,26 @@ Lista viva do que ficou combinado. Marque com `[x]` o que for concluído.
       (Authentication → Sign In / Providers → "Allow new users to sign up")
 
 ## 2. E-mails com cara de Ninho
-- [ ] Ligar e-mail próprio (SMTP) com o Gmail + "senha de app" do Google
+- [x] Ligar e-mail próprio (SMTP) com o Gmail + "senha de app" do Google
   - remetente passa a ser "Ninho" em vez de "Supabase Auth"
   - acaba o limite de 2 e-mails por hora
   - libera a edição dos modelos de e-mail
-- [ ] Personalizar os e-mails em português: confirmação de conta, recuperar senha, convite
+- [x] Personalizar os e-mails em português: confirmação de conta, recuperar senha, convite (modelos em `emails/`)
+- [ ] Testar: "Esqueci minha senha" deve chegar de "Ninho", em português
 
 ## 3. Login
 - [x] Login com Google
 - [ ] (Opcional) Trazer de volta o "entrar sem senha" por link no e-mail
+
+## 4. Relógio Xiaomi (Mi Fitness) — combinado para outro momento
+- [ ] **A. Dados do relógio no Ninho**: Mi Fitness → app Saúde do iPhone → atalho
+      diário (app Atalhos) → mensageiro no Supabase → Ninho
+  - [ ] Ligar a integração com o Apple Saúde no Mi Fitness
+  - [ ] Decidir quais dados importam (sono, passos, batimentos, exercício, estresse)
+  - [ ] Mostrar no Diário e cruzar com humor e sintomas nas Estatísticas
+- [ ] **B. Lembretes do Ninho no relógio**: notificações do app (instalado na Tela
+      de Início) com envio programado pelo Supabase; o relógio espelha as do iPhone
+  - [ ] Começar por remédios, reposição hormonal e água
 
 ## 4. Sugestões para depois
 - [ ] Ícone e nome próprios ao adicionar à Tela de Início do celular
