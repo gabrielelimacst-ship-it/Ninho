@@ -1,7 +1,7 @@
-// Ninho — mensageiro da agenda (Supabase Edge Function "agenda")
-// Recebe os links secretos (Google / Apple) de quem está logado, busca as agendas
-// e devolve os eventos já organizados (inclusive os que se repetem).
-// Só aceita links do Google Agenda e do iCloud, e só para quem fez login no Ninho.
+// Ninho - mensageiro da agenda (Supabase Edge Function "agenda")
+// Recebe os links secretos (Google / Apple) de quem esta logado, busca as agendas
+// e devolve os eventos ja organizados (inclusive os que se repetem).
+// So aceita links do Google Agenda e do iCloud, e so para quem fez login no Ninho.
 import ICAL from "npm:ical.js@2.2.1";
 
 const CORS = {
@@ -19,11 +19,11 @@ const SB_KEY = Deno.env.get("SUPABASE_ANON_KEY") || "sb_publishable_a4_5xhZAn9Nh
 async function logado(req: Request) {
   const auth = req.headers.get("Authorization") || "";
   if (!auth.startsWith("Bearer ")) return false;
-  const r = await fetch(`${SB_URL}/auth/v1/user`, { headers: { Authorization: auth, apikey: SB_KEY } });
+  const r = await fetch(SB_URL + "/auth/v1/user", { headers: { Authorization: auth, apikey: SB_KEY } });
   return r.ok;
 }
 
-// Núcleo: lê um texto .ics e devolve os eventos entre "de" e "ate".
+// Nucleo: le um texto .ics e devolve os eventos entre "de" e "ate".
 // deno-lint-ignore no-explicit-any
 function expandir(ICAL: any, texto: string, de: Date, ate: Date, cal: string) {
   const raiz = new ICAL.Component(ICAL.parse(texto));
@@ -46,7 +46,7 @@ function expandir(ICAL: any, texto: string, de: Date, ate: Date, cal: string) {
     const dia = ini.isDate;
     const s = dia ? ini.toString().slice(0, 10) : ini.toJSDate().toISOString();
     const f = fim ? (dia ? fim.toString().slice(0, 10) : fim.toJSDate().toISOString()) : s;
-    lista.push({ cal, t: item.summary || "(sem título)", s, e: f, ad: dia ? 1 : 0, l: item.location || "" });
+    lista.push({ cal, t: item.summary || "(sem t\u00edtulo)", s, e: f, ad: dia ? 1 : 0, l: item.location || "" });
   };
   const A = de.getTime(), B = ate.getTime();
   for (const e of mestres.values()) {
