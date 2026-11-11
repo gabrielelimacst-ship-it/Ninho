@@ -273,7 +273,7 @@ function gain(n,p,m,s){const a=lv();D.xp=Math.max(0,D.xp+n);if(n<0)return snd('t
 const SB_URL='https://nsjissvwnhaoyaqinzqp.supabase.co',SB_KEY='sb_publishable_a4_5xhZAn9NhGWV5SGTw3w_pwyZFIrN',GOOGLE_OFF=0;let GOOGLE=false,PROV=[];
 const sb=window.supabase?supabase.createClient(SB_URL,SB_KEY):null,back=()=>location.origin+location.pathname;
 let syncT,dirty=0,HRT=0;const HRT_H=['d1d2000bb4b5d9274422eee54f3976b33619a2bee9c0c45530f8871b9cae7ef2'];
-const sha=async t=>{try{const b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(t));return[...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,'0')).join('')}catch(e){return''}};const PV=!!window.NINHO_PREVIEW;
+const sha=async t=>{try{const b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(t));return[...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,'0')).join('')}catch(e){return''}};const PV=!!window.NINHO_PREVIEW||/[?&]previa\b/.test(location.search);
 const kD=()=>'ninho_d_'+UID,kX=()=>'ninho_dirty_'+UID,kA=()=>'ninho_at_'+UID;
 const save=()=>{if(!UID)return;ls(kD(),D);dirty=1;ls(kX(),1);clearTimeout(syncT);syncT=setTimeout(push,1200)};
 let cfx=0;
@@ -347,7 +347,7 @@ if(r.err){UID=null;return wait(navigator.onLine?'Não consegui abrir o seu ninho
 if(r.data){ls(kD(),r.data.dados);ls(kA(),Date.parse(r.data.atualizado_em))}boot(U,g,r.data?r.data.dados:{})}
 if(!D.cfg.email&&s.user.email){D.cfg.email=s.user.email;save()}}
 async function gChk(){if(GOOGLE||!sb)return;try{const r=await Promise.race([fetch(SB_URL+'/auth/v1/settings',{headers:{apikey:SB_KEY}}).then(r=>r.json()),new Promise(r=>setTimeout(r,2000))]);GOOGLE=!!(r&&r.external&&r.external.google)}catch(e){}}
-let inited=0;async function init(){if(PV){UID='previa';HRT=1;U='você';boot(U,1,ls(kD())||{});return setTimeout(()=>toast('Modo prévia: os dados ficam só aqui'),1500)}
+let inited=0;async function init(){if(PV){UID='previa';HRT=window.NINHO_HRT?1:0;U='você';boot(U,1,ls(kD())||{});return setTimeout(()=>toast('Modo prévia: os dados ficam só aqui'),1500)}
 if(!sb)return wait('Não consegui carregar o Ninho. Verifique a internet e recarregue a página.');
 const q=new URLSearchParams(location.hash.slice(1)+'&'+location.search.slice(1)),ue=q.get('error_description');if(ue)history.replaceState(null,'',back());
 if(!inited){inited=1;sb.auth.onAuthStateChange((ev,s)=>setTimeout(()=>{if(ev=='PASSWORD_RECOVERY'){UID=null;mode='np';return auth()}if(ev=='SIGNED_IN'&&s&&mode!='np')start(s,1);if(ev=='SIGNED_OUT'&&UID){UID=null;mode='in';auth()}}))}
