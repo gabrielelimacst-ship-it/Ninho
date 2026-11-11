@@ -12,8 +12,22 @@ Endereço: `https://<seu-usuario>.github.io/ninho/`
 
 ## Onde ficam os dados
 
-Tudo fica salvo **no navegador** de quem usa (localStorage). Isso significa:
+Os dados ficam no **Supabase** (projeto `nsjissvwnhaoyaqinzqp`), na tabela `ninhos`:
+uma linha por pessoa, protegida por RLS — cada conta só lê e grava o próprio ninho.
 
-- cada celular/computador tem o seu próprio ninho — não sincroniza entre aparelhos;
-- limpar os dados do navegador apaga o ninho;
-- o login é local, serve para separar perfis no mesmo aparelho, não é uma senha protegida em servidor.
+- O app também guarda uma cópia no aparelho, então funciona sem internet e envia
+  as mudanças quando a conexão volta.
+- Se o mesmo ninho for alterado em dois aparelhos ao mesmo tempo, vale a última alteração enviada.
+- Ao sair da conta, a cópia do aparelho é apagada.
+
+## Login
+
+- E-mail + senha, link mágico por e-mail e recuperação de senha: ativos.
+- Google: pronto no código, desligado (`GOOGLE=false` no `index.html`) até o
+  provedor Google ser configurado no Supabase.
+
+`supabase.js` é a biblioteca oficial `@supabase/supabase-js` (build UMD), guardada no
+repositório para o app não depender de CDN.
+
+A chave `sb_publishable_...` no código é pública por natureza; a segurança vem das
+regras RLS da tabela.
