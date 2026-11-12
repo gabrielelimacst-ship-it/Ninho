@@ -8,7 +8,16 @@
 import nodemailer from "npm:nodemailer@6.9.16";
 
 const SB_URL = Deno.env.get("SUPABASE_URL") || "";
-const SRV = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") || "";
+// Chave de servidor: formato novo (SUPABASE_SECRET_KEYS) ou antigo (SERVICE_ROLE)
+function chaveServidor(): string {
+  try {
+    const novas = JSON.parse(Deno.env.get("SUPABASE_SECRET_KEYS") || "{}");
+    const v = Object.values(novas)[0];
+    if (typeof v === "string" && v) return v;
+  } catch (_) { /* sem chaves novas */ }
+  return Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") || "";
+}
+const SRV = chaveServidor();
 const USER = Deno.env.get("GMAIL_USER") || "";
 const PASS = (Deno.env.get("GMAIL_SENHA_APP") || "").replace(/\s/g, "");
 const PARA = Deno.env.get("AVISO_PARA") || USER;
@@ -51,8 +60,10 @@ Deno.serve(async (req) => {
   // Confere no banco: a sugestao existe e e recente (evita e-mails falsos ou repetidos)
   const h: Record<string, string> = { apikey: SRV };
   if (!SRV.startsWith("sb_")) h.Authorization = "Bearer " + SRV;
+  if (!SRV) return json({ ok: false, msg: "sem chave de servidor" }, 500);
   const r = await fetch(SB_URL + "/rest/v1/sugestoes?select=id,tipo,texto,email,versao,criado_em&id=eq." + id, { headers: h });
-  const s = r.ok ? (await r.json())[0] : null;
+  if (!r.ok) return json({ ok: false, msg: "sem acesso ao banco", status: r.status, detalhe: (await r.text()).slice(0, 160) }, 500);
+  const s = (await r.json())[0];
   if (!s) return json({ ok: false, msg: "nao achei" }, 404);
   if (Date.now() - new Date(s.criado_em).getTime() > 10 * 60e3) return json({ ok: false, msg: "antiga" }, 200);
 
