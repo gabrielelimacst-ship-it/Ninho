@@ -4,7 +4,7 @@ Lista viva do que ficou combinado. Marque com `[x]` o que for concluído.
 Última revisão: 12/11/2026.
 
 ## 1. Testes rápidos (só você)
-- [ ] Mandar uma sugestão pelo app (Perfil → Enviar sugestão) e ver se o e-mail chega
+- [x] Mandar uma sugestão pelo app e ver se o e-mail chega (funcionou em 12/11)
 - [ ] Entrar com código por e-mail e ver se o código aparece sozinho em cima do teclado
 - [ ] "Esqueci minha senha": o e-mail deve chegar de "Ninho", em português
 - [ ] Vibração no iPhone (nova tentativa; precisa de iOS 18+ e Ajustes → Sons e Tátil → "Tátil do Sistema")
@@ -12,6 +12,8 @@ Lista viva do que ficou combinado. Marque com `[x]` o que for concluído.
 - [ ] Tom de pele dos emojis (Perfil → Interface)
 - [ ] Revisão do dia na Agenda: tocar num dia passado e marcar humor, água, remédios e tarefas
 - [ ] Diário: faixa dos 7 dias no topo para rever e corrigir humor, sensações, eventos e notas
+- [ ] Saúde: a mesma faixa dos 7 dias, para corrigir água, refeições, remédios, exercício e sintomas
+- [ ] Emojis de pessoas: escolher o gênero (Perfil → Interface)
 
 ## 2. Relógio Xiaomi — combinado para depois
 - [x] Código pronto: função `relogio`, tabelas, chave pessoal, cartão no Diário,
@@ -29,6 +31,16 @@ Lista viva do que ficou combinado. Marque com `[x]` o que for concluído.
   - [ ] Junto: ícone e nome próprios na Tela de Início
 
 ## 3. Melhorias para depois
+- [ ] Ajustar o layout do e-mail de sugestão (chegou, mas o visual ficou ruim)
+- [ ] Sugestões chegarem no WhatsApp Business
+      (caminhos: API oficial do WhatsApp Business, que exige conta Meta e modelo de mensagem
+      aprovado; ou um serviço intermediário; decidir quando formos fazer)
+- [ ] **Perfis integrados (2 pessoas)**: casais ou famílias verem tarefas conjuntas.
+      É possível. Ideia a amadurecer: um "ninho compartilhado" com convite por e-mail,
+      tarefas marcadas como "da casa/família" visíveis para os dois, e o resto
+      (saúde, diário, humor) continua privado de cada pessoa. Exige mudar o banco:
+      hoje cada conta tem um bloco só dela; as tarefas conjuntas precisariam de uma
+      tabela própria com regra de acesso para os dois
 - [ ] Compromissos de hoje também na aba Tarefas
 - [ ] Transformar um compromisso em tarefa
 - [ ] Juntar automaticamente as duas versões quando houver conflito entre aparelhos
