@@ -8,12 +8,13 @@ Lista viva do que ficou combinado. Marque com `[x]` o que for concluído.
 - [ ] Entrar com código por e-mail e ver se o código aparece sozinho em cima do teclado
 - [ ] "Esqueci minha senha": o e-mail deve chegar de "Ninho", em português
 - [ ] Vibração no iPhone (nova tentativa; precisa de iOS 18+ e Ajustes → Sons e Tátil → "Tátil do Sistema")
-- [ ] Remédios com frequência: cadastrar um de dias da semana e um com dois horários
-- [ ] Tom de pele dos emojis (Perfil → Interface)
-- [ ] Revisão do dia na Agenda: tocar num dia passado e marcar humor, água, remédios e tarefas
-- [ ] Diário: faixa dos 7 dias no topo para rever e corrigir humor, sensações, eventos e notas
-- [ ] Saúde: a mesma faixa dos 7 dias, para corrigir água, refeições, remédios, exercício e sintomas
-- [ ] Emojis de pessoas: escolher o gênero (Perfil → Interface)
+- [x] Remédios com frequência: cadastrar um de dias da semana e um com dois horários
+- [x] Tom de pele dos emojis (Perfil → Interface)
+- [x] Revisão do dia na Agenda: tocar num dia passado e marcar humor, água, remédios e tarefas
+- [x] Diário: faixa dos 7 dias no topo para rever e corrigir humor, sensações, eventos e notas
+- [x] Saúde: a mesma faixa dos 7 dias, para corrigir água, refeições, remédios, exercício e sintomas
+- [x] Emojis de pessoas: escolher o gênero (Perfil → Interface)
+- [x] Há quantos dias e libido (testado em 13/11)
 
 ## 2. Relógio Xiaomi — combinado para depois
 - [x] Código pronto: função `relogio`, tabelas, chave pessoal, cartão no Diário,
