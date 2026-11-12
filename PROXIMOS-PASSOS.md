@@ -29,11 +29,9 @@ Lista viva do que ficou combinado. Marque com `[x]` o que for concluído.
 - [ ] Colar o modelo `emails/codigo.html` em Magic Link e atualizar o Confirm signup
 
 ## 4. Relógio Xiaomi (Mi Fitness) — combinado para outro momento
-- [ ] **A. Dados do relógio no Ninho**: Mi Fitness → app Saúde do iPhone → atalho
-      diário (app Atalhos) → mensageiro no Supabase → Ninho
-  - [ ] Ligar a integração com o Apple Saúde no Mi Fitness
-  - [ ] Decidir quais dados importam (sono, passos, batimentos, exercício, estresse)
-  - [ ] Mostrar no Diário e cruzar com humor e sintomas nas Estatísticas
+- [x] **A. Dados do relógio no Ninho** (sono, passos, batimentos): código pronto
+  - [ ] Seguir `docs/relogio-atalho.md`: Mi Fitness → Saúde, SQL, função `relogio`,
+        chave no Ninho, atalho e automação diária
 - [ ] **B. Lembretes do Ninho no relógio**: notificações do app (instalado na Tela
       de Início) com envio programado pelo Supabase; o relógio espelha as do iPhone
   - [ ] Começar por remédios, reposição hormonal e água

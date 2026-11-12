@@ -223,6 +223,8 @@ nav svg{stroke-width:1.7}
 .tmo{display:flex;align-items:center;gap:10px;width:100%;text-align:left;background:var(--c1);color:var(--t1);border:1.5px solid transparent;border-radius:16px;padding:12px 14px;font-size:15px}
 .tmo.on{border-color:var(--t1)}.tmf{background:none!important;color:inherit!important;border:1.5px solid rgba(127,127,127,.35)!important}
 #sh select{width:100%;font-size:16px;padding:13px 16px;border-radius:16px;min-height:50px;background:var(--s1);color:inherit;border:1.5px solid rgba(127,127,127,.12)}
+.wst{display:flex;gap:10px}.wit{flex:1;background:var(--c1);border-radius:18px;padding:12px 10px;display:flex;flex-direction:column;align-items:center;gap:2px;text-align:center}.wit span{font-size:20px}.wit b{font-size:19px}.wit small{font-size:12px;opacity:.6}
+.wkey{font-family:ui-monospace,Menlo,monospace;font-size:12.5px;word-break:break-all;background:var(--s1);border-radius:14px;padding:12px 14px;user-select:all;-webkit-user-select:all}
 .dots i.ev{border-radius:1px;transform:rotate(45deg);width:4.5px;height:4.5px}
 .evh{font-size:11.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;opacity:.6;margin:16px 4px 2px}
 .evr{gap:12px!important;justify-content:flex-start!important}.evt{font-size:13px;font-variant-numeric:tabular-nums;opacity:.75;min-width:58px}.evc{font-size:11px;opacity:.5}
@@ -296,11 +298,17 @@ EV={at:Date.now(),list:data.eventos||[],st:data.status||{}};ls(kE(),EV)}catch(e)
 if(UID==id&&tab=='c'&&!$('#md').classList.contains('s'))render(1)}
 const evDay=id=>{if(!EV||!EV.list)return[];const a=new Date(id+'T00:00'),b=new Date(id+'T23:59:59.999');
 return EV.list.filter(e=>e.ad?(e.s<=id&&(id<e.e||e.s==e.e)):(new Date(e.s)<=b&&new Date(e.e)>a)||(e.s==e.e&&iso(new Date(e.s))==id)).sort((x,y)=>(y.ad-x.ad)||(x.s<y.s?-1:1))};
+/* Relógio (Mi Fitness → app Saúde → Atalhos → Ninho) */
+let W={},wT=0;const kW=()=>'ninho_w_'+UID,WURL=SB_URL+'/functions/v1/relogio';
+const hmin=m=>m?Math.floor(m/60)+'h'+pad(m%60):'',nPt=n=>(+n).toLocaleString('pt-BR');
+async function wGet(force){if(PV||!UID)return;if(!force&&Date.now()-wT<10*6e4)return;wT=Date.now();const id=UID;
+try{const{data,error}=await sb.from('relogio').select('dia,passos,sono_min,bpm_medio,bpm_repouso,atualizado_em').gte('dia',iso(new Date(Date.now()-120*864e5)));if(error||UID!=id)return;
+const n={};(data||[]).forEach(r=>n[r.dia]=r);const mud=JSON.stringify(n)!=JSON.stringify(W);W=n;ls(kW(),W);if(mud&&!$('#md').classList.contains('s')&&(tab=='d'||tab=='s'))render(1)}catch(e){}}
 async function fetchR(){try{const{data,error}=await sb.from('ninhos').select('dados,atualizado_em').eq('user_id',UID).maybeSingle();return error?{err:error}:{data}}catch(e){return{err:e}}}
 async function sync(){if(PV||!UID||!navigator.onLine)return;if(dirty)return push();const id=UID,r=await fetchR();if(r.err||UID!=id||dirty)return;
 if(!r.data){dirty=1;return push()}const at=Date.parse(r.data.atualizado_em);if(at===ls(kA()))return;
 ls(kD(),r.data.dados);ls(kA(),at);if(!$('#md').classList.contains('s'))boot(U,0,r.data.dados)}
-document.addEventListener('visibilitychange',()=>{if(!UID)return;document.hidden?push():sync()});
+document.addEventListener('visibilitychange',()=>{if(!UID)return;document.hidden?push():(sync(),wGet())});
 addEventListener('online',()=>UID&&sync());addEventListener('pagehide',()=>UID&&push());
 const hs=async(u,p)=>{try{const b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode('fs:'+u+':'+p));return[...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,'0')).join('')}catch(e){return btoa(u+':'+p)}};
 function auth(msg,ok){$('#nav').innerHTML='';$('#bg').innerHTML='';$('#bg').dataset.k='';const av=$('#avb');av&&av.remove();const h=new Date().getHours(),gr=h<5?'Boa noite':h<12?'Bom dia':h<18?'Boa tarde':'Boa noite',m=mode,up=m=='up';
@@ -346,10 +354,10 @@ mode='in';toast('Senha alterada ✦');const{data:{session:s}}=await sb.auth.getS
 function gGo(){sb.auth.signInWithOAuth({provider:'google',options:{redirectTo:back()}}).then(r=>r.error&&auth(ERR(r.error)))}
 function wait(t,btn){$('#nav').innerHTML='';$('#app').innerHTML=`<div class="card" style="margin-top:40vh;text-align:center"><p class="sm" style="margin:0">${t}</p>${btn||''}</div>`}
 async function start(s,g){const id=s.user.id;if(UID===id)return;UID=id;EM=s.user.email||'';HRT=HRT_H.includes(await sha(EM.trim().toLowerCase()))?1:0;if(UID!==id)return;PROV=(s.user.identities||[]).map(x=>x.provider);U=(s.user.email||'você').split('@')[0];dirty=ls(kX())?1:0;const loc=ls(kD());
-if(loc){boot(U,g,loc);sync()}else{wait('Abrindo o seu ninho…');const r=await fetchR();if(UID!==id)return;
+W=ls(kW())||{};if(loc){boot(U,g,loc);sync()}else{wait('Abrindo o seu ninho…');const r=await fetchR();if(UID!==id)return;
 if(r.err){UID=null;return wait(navigator.onLine?'Não consegui abrir o seu ninho agora.':'Sem internet. Conecte-se para abrir o seu ninho pela primeira vez neste aparelho.','<button class="sgb w" onclick="init()">Tentar de novo</button>')}
 if(r.data){ls(kD(),r.data.dados);ls(kA(),Date.parse(r.data.atualizado_em))}boot(U,g,r.data?r.data.dados:{})}
-if(!D.cfg.email&&s.user.email){D.cfg.email=s.user.email;save()}}
+if(!D.cfg.email&&s.user.email){D.cfg.email=s.user.email;save()}wGet(1)}
 async function gChk(){if(GOOGLE||!sb)return;try{const r=await Promise.race([fetch(SB_URL+'/auth/v1/settings',{headers:{apikey:SB_KEY}}).then(r=>r.json()),new Promise(r=>setTimeout(r,2000))]);GOOGLE=!!(r&&r.external&&r.external.google)}catch(e){}}
 let inited=0;async function init(){if(PV){UID='previa';HRT=window.NINHO_HRT?1:0;U='você';boot(U,1,ls(kD())||{});return setTimeout(()=>toast('Modo prévia: os dados ficam só aqui'),1500)}
 if(!sb)return wait('Não consegui carregar o Ninho. Verifique a internet e recarregue a página.');
@@ -361,7 +369,7 @@ function boot(u,g,dd){U=u;D=Object.assign({tasks:[],days:{},meds:[],ev:[],xp:0,i
 $('#app').innerHTML='<div id="pg"><div id="hd"></div><div id="gl"></div><div id="v"></div></div>';
 $('#nav').innerHTML=[['t','Tarefas'],['h','Saúde'],['c','Agenda'],['d','Diário'],['s','Stats']].map(([k,l])=>`<button data-k="${k}" onclick="go2('${k}')" aria-label="${l}">${svg(IC[k])}${l}</button>`).join('');render();hiS(g)}
 async function out(){if(PV)return toast('Na prévia não há conta. Use o site para entrar.');await push();if(dirty&&!confirm('Você está sem internet e algumas mudanças ainda não foram salvas na nuvem. Sair mesmo assim e perder essas mudanças?'))return;
-[kD(),kX(),kA(),kE()].forEach(k=>localStorage.removeItem(k));UID=null;EM='';EV=null;dirty=0;closeM();mode='in';await sb.auth.signOut().catch(()=>{});auth()}
+[kD(),kX(),kA(),kE(),kW()].forEach(k=>localStorage.removeItem(k));W={};UID=null;EM='';EV=null;dirty=0;closeM();mode='in';await sb.auth.signOut().catch(()=>{});auth()}
 const avS=()=>D.cfg.av>=0?'background:#e6e2d3;overflow:hidden':D.cfg.photo?`background-image:url(${D.cfg.photo})`:'',avT=()=>D.cfg.av>=0?avSvg(D.cfg.av):D.cfg.photo?'':esc((D.cfg.nick||U)[0].toUpperCase());
 const FR=['Um passo de cada vez.','Termine uma coisinha e o resto fica mais leve.','Ficou algo para trás? Tudo bem.','Seu ritmo também é ritmo.','Respira. Você está indo bem.','Feito é melhor que perfeito.','Hoje pode ser mais leve.','Você não precisa dar conta de tudo hoje.','Cuidar de você também é tarefa.','Pausa também é progresso.','Um copo d’água já conta.','Devagar também chega.'],VER='0.9';
 const hdr=t=>{const n=new Date();return`<div class="hd"><div><div class="gr">${n.toLocaleDateString('pt-BR',{weekday:'long',day:'numeric',month:'long'})}</div><h1>${t}</h1><div class="frs">${FR[(Math.floor(Date.now()/864e5)+'thcds'.indexOf(tab))%FR.length]}</div></div><button class="av" style="${avS()}" onclick="prof()" aria-label="Perfil">${avT()}</button></div>`};
@@ -430,8 +438,11 @@ function addM(){const n=$('#mn').value.trim();if(!n)return;D.meds.push({n,h:$('#
 function dM(j){D.meds.splice(j,1);save();$('#ml').innerHTML=medL()}
 /* Diário */
 const chip=(k,i,e,n,d)=>`<button class="chip ${d[k].includes(n)?'on':''}" onclick="ts('${k}',${i},this)">${e} ${esc(n)}</button>`;
-function diaryV(){const d=rd(TODAY());
-return A(hero('Hoje','Como foi o dia?','Sem certo ou errado. Só registre.','bk'),
+function wCard(){const w=W[TODAY()]||{},ok=w.passos!=null||w.sono_min||w.bpm_repouso||w.bpm_medio;if(!D.cfg.wOn&&!ok)return'';
+const it=[w.sono_min?`<div class="wit"><span>😴</span><b>${hmin(w.sono_min)}</b><small>de sono</small></div>`:'',w.passos!=null?`<div class="wit"><span>👣</span><b>${nPt(w.passos)}</b><small>passos</small></div>`:'',w.bpm_repouso||w.bpm_medio?`<div class="wit"><span>❤️</span><b>${w.bpm_repouso||w.bpm_medio}</b><small>bpm ${w.bpm_repouso?'em repouso':'em média'}</small></div>`:''].join('');
+return`<div class="lb">⌚ Do seu relógio</div>${ok?`<div class="wst">${it}</div><p class="sm" style="margin:10px 0 0">Atualizado às ${hm(w.atualizado_em)}</p>`:'<p class="sm" style="margin:0">Ainda sem dados de hoje. O atalho manda os números do dia no horário que você escolheu.</p>'}`}
+function diaryV(){const d=rd(TODAY());wGet();
+return A(hero('Hoje','Como foi o dia?','Sem certo ou errado. Só registre.','bk'),...[wCard()].filter(Boolean),
 `<div class="lb">Como você está agora?</div><div class="moods">${MO.map((e,i)=>`<button class="mo ${d.mood==i+1?'on':''}" onclick="sm(${i+1})" aria-label="Humor ${i+1}">${e}</button>`).join('')}</div>`,
 `<div class="lb">Sensações</div><div class="chips w" style="margin:0">${SY.map(([e,n],i)=>chip('sy',i,e,n,d)).join('')}</div>`,
 `<div class="lb">Eventos e comportamentos</div><div class="chips w" style="margin-top:0">${D.ev.map((n,i)=>chip('ev',i,'',n,d)).join('')}</div><div class="row"><input id="ei" placeholder="Ex: Notícia ruim, Presente..." onkeydown="if(event.key=='Enter')addE()"><button class="bt" onclick="addE()">Add</button></div>`,
@@ -457,6 +468,9 @@ if(h!='all')return f[h]??0;const v=Object.values(f).filter(x=>x!==null);return v
 function feats(d){const f=[...d.sy,...d.ev,...(d.bs||[])];if(D.meds.length)f.push(D.meds.every(m=>d.md[m.n])?'Medicação completa':'Medicação incompleta');f.push(d.w<D.cfg.goal/2?'Pouca água':'Água ok',d.ex.length?'Fez exercício':'Sem exercício');if(d.ml.filter(x=>x).length<3)f.push('Pulou refeição');return f}
 function statsV(){const days=lastN(7),X=i=>46+i*40,Y=v=>160-v*28,ds=Object.values(D.days).filter(d=>d.mood),av=a=>a.reduce((s,x)=>s+x,0)/a.length;let ins=[];
 new Set(ds.flatMap(d=>feats(d))).forEach(F=>{const w=ds.filter(d=>feats(d).includes(F)).map(d=>d.mood),o=ds.filter(d=>!feats(d).includes(F)).map(d=>d.mood);if(w.length>1&&o.length>1){const df=av(w)-av(o);if(Math.abs(df)>=.4)ins.push([df,`Nos dias com “${esc(F)}”, o humor médio foi ${av(w).toFixed(1)} contra ${av(o).toFixed(1)} nos demais (${df>0?'+':''}${df.toFixed(1)}).`])}});
+wGet();{const md=Object.entries(D.days).filter(([id,x])=>x.mood&&W[id]),g=(f,txt,out)=>{const A1=md.filter(([id])=>f(W[id])===true).map(([,x])=>x.mood),B1=md.filter(([id])=>f(W[id])===false).map(([,x])=>x.mood);if(A1.length>1&&B1.length>1){const df=av(A1)-av(B1);if(Math.abs(df)>=.3)ins.push([df,`${txt}, o humor médio foi ${av(A1).toFixed(1)}, contra ${av(B1).toFixed(1)} ${out} (${df>0?'+':''}${df.toFixed(1)}).`])}};
+g(w=>!w.sono_min?null:w.sono_min>=420?true:w.sono_min<360?false:null,'⌚ Nos dias depois de dormir 7h ou mais','depois de noites com menos de 6h');
+g(w=>w.passos==null?null:w.passos>=6000,'⌚ Nos dias com 6 mil passos ou mais','nos dias mais parados')}
 ins.sort((a,b)=>Math.abs(b[0])-Math.abs(a[0]));
 const pts=days.map((id,i)=>[X(i),rd(id).mood]).filter(p=>p[1]).map(([x,m])=>[x,Y(m)]),id=days[sdx],d=rd(id),g=D.cfg.goal,ts=tdy(id),ms=MS.filter((_,i)=>!d.ml[i]).map(m=>m[1].toLowerCase()),mm=D.meds.filter(m=>!d.md[m.n]).map(m=>m.n);
 const ln=[`💧 ${d.w<g?`Faltou beber ${g-d.w} copo(s) de água.`:'Meta de água batida.'}`,`🍽️ ${ms.length?'Pulou a refeição: '+ms.join(', ')+'.':'Fez todas as refeições.'}`];
@@ -477,7 +491,7 @@ function infoOk(){document.querySelectorAll('#sh [data-k]').forEach(i=>D.cfg[i.d
 function infoBk(){if(chg&&confirm('Você mudou alguma coisa. Salvar antes de sair?'))return infoOk();chg=0;prof()}
 function uiS(){scr('Interface',`<div class="card" style="padding:4px 18px">${swc('snd','Sons de recompensa')}${swc('vib','Vibração')}${swc('fx','Confete e animações')}</div><div class="lb" style="margin:18px 6px 8px">Seções da Saúde</div><div class="card" style="padding:4px 18px">${swc('exm','Registro de exames')}</div><p class="sm" style="margin:0 6px">Desligar só esconde a seção. O que você já registrou continua guardado.</p>`,'prof()')}
 const li2=(i,l,sub,f,soon)=>`<button class="li" onclick="${f}"><span>${i} ${l}${soon?'<span class="soon">em breve</span>':''}<span class="lis">${sub}</span></span><span style="opacity:.4">›</span></button>`,lbS=t=>`<div class="lb" style="margin:18px 6px 8px">${t}</div>`;
-function dataS(){scr('Conexões e dados',lbS('Seus dados')+grp(li2('📊','Baixar meus dados','Planilha com abas: dias, tarefas, exames, remédios, recompensas e mais','csv()'))+lbS('Calendários')+grp(li2('📅','Apple Calendário',(D.cfg.cal||{}).apple?'Conectado ✓ · eventos na aba Agenda':'Veja seus eventos do iPhone na aba Agenda',"calS('apple')")+li2('📆','Google Agenda',(D.cfg.cal||{}).google?'Conectado ✓ · eventos na aba Agenda':'Veja seus eventos do Google na aba Agenda',"calS('google')"))+lbS('Contas')+grp(li2('🔐','Google',PROV.includes('google')?'Conectada ✓':'Entrar no Ninho com a sua conta Google','gAcc()',!GOOGLE)),'prof()')}
+function dataS(){scr('Conexões e dados',lbS('Seus dados')+grp(li2('📊','Baixar meus dados','Planilha com abas: dias, tarefas, exames, remédios, recompensas e mais','csv()'))+lbS('Calendários')+grp(li2('📅','Apple Calendário',(D.cfg.cal||{}).apple?'Conectado ✓ · eventos na aba Agenda':'Veja seus eventos do iPhone na aba Agenda',"calS('apple')")+li2('📆','Google Agenda',(D.cfg.cal||{}).google?'Conectado ✓ · eventos na aba Agenda':'Veja seus eventos do Google na aba Agenda',"calS('google')"))+lbS('Relógio')+grp(li2('⌚','Relógio (Mi Fitness)',D.cfg.wOn?'Conectado ✓ · sono, passos e batimentos no Diário':'Sono, passos e batimentos no Ninho','wS()'))+lbS('Contas')+grp(li2('🔐','Google',PROV.includes('google')?'Conectada ✓':'Entrar no Ninho com a sua conta Google','gAcc()',!GOOGLE)),'prof()')}
 function waterS(){scr('Copos de água',`<div class="card"><div class="sm" style="margin-bottom:12px">Meta diária de copos (cada copo = 250 ml)</div><div class="row sp"><button class="rb" onclick="gl(-1)">−</button><b id="gv" style="font-size:22px">${D.cfg.goal}</b><button class="rb" onclick="gl(1)">+</button></div></div>`,'regS()')}
 function cf(k,el){D.cfg[k]=D.cfg[k]?0:1;el.classList.toggle('on');save();if(k=='snd')snd('ok');if(k=='vib')vibr()}
 function gl(n){D.cfg.goal=Math.min(12,Math.max(4,D.cfg.goal+n));$('#gv').textContent=D.cfg.goal;save()}
@@ -509,6 +523,17 @@ e('Testando o link…');try{const{data,error}=await sb.functions.invoke('agenda'
 if(!st.ok)return e(st.erro=='http'?'A agenda não respondeu ('+st.codigo+'). Confira se copiou o link inteiro.':st.erro=='link'?'Esse link não é do Google nem do iCloud.':'Não consegui ler essa agenda. Confira o link.');
 D.cfg.cal=Object.assign({},D.cfg.cal,{[k]:u});save();localStorage.removeItem(kE());EV=null;toast('Agenda conectada ✦');evGet(1);dataS()}catch(x){e(evErr(x))}}
 function calRm(k){const c=Object.assign({},D.cfg.cal);delete c[k];D.cfg.cal=c;save();localStorage.removeItem(kE());EV=null;toast('Agenda desconectada');dataS()}
+function wS(k){const u=Object.values(W).sort((a,b)=>a.atualizado_em<b.atualizado_em?1:-1)[0];
+scr('Relógio',`<div class="card"><p class="sm" style="margin-top:0;opacity:.85">O Ninho recebe do app <b>Saúde</b> do iPhone os números do seu relógio: <b>sono, passos e batimentos</b>. Quem leva os números até aqui é um atalho do app <b>Atalhos</b>, que roda sozinho uma vez por dia.</p>
+${D.cfg.wOn?`<p class="sm" style="margin:0 0 12px">${u?'✓ Último envio: '+new Date(u.atualizado_em).toLocaleString('pt-BR',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'}):'Ainda não chegou nenhum envio do atalho.'}</p>`:''}
+${k?`<div class="lb" style="margin:6px 4px 6px">Sua chave pessoal</div><div class="wkey">${k}</div><button class="gb w" style="margin-top:8px;padding:12px" onclick="cpy('${k}','Chave copiada ✦')">Copiar chave</button><div class="lb" style="margin:14px 4px 6px">Endereço do Ninho</div><div class="wkey">${WURL}</div><button class="gb w" style="margin-top:8px;padding:12px" onclick="cpy('${WURL}','Endereço copiado ✦')">Copiar endereço</button><p class="sm" style="margin:12px 4px 0">⚠️ Guarde a chave só no atalho. Ela não aparece de novo; se perder, gere outra.</p>`:`<button class="sgb w" style="margin:0" onclick="wKey()">${D.cfg.wOn?'Gerar nova chave':'Gerar minha chave'}</button>${D.cfg.wOn?'<p class="sm" style="margin:10px 4px 0">Gerar uma nova chave desliga a antiga. Aí é preciso colar a nova no atalho.</p>':''}`}
+<p id="wke" class="sm" style="min-height:14px;margin:8px 4px 0"></p></div>${D.cfg.wOn?grp(li('🔌','Desconectar o relógio','wOff()')):''}`,'dataS()')}
+function cpy(t,m){(navigator.clipboard?navigator.clipboard.writeText(t):Promise.reject()).then(()=>toast(m),()=>toast('Toque e segure para copiar'))}
+async function wKey(){const e=x=>$('#wke').textContent=x;if(PV)return e('Na prévia isso não funciona. Use o site.');e('Gerando…');
+const a=new Uint8Array(24);crypto.getRandomValues(a);const k='ninho_'+[...a].map(x=>x.toString(16).padStart(2,'0')).join(''),h=await sha(k);
+try{await sb.from('relogio_chaves').delete().eq('user_id',UID);const{error}=await sb.from('relogio_chaves').insert({chave_hash:h});if(error)throw error;D.cfg.wOn=1;save();snd('ok');wS(k)}
+catch(x){e(/relation|does not exist|schema cache/i.test(x.message||'')?'As tabelas do relógio ainda não foram criadas no Supabase.':'Não deu para gerar agora. Tente de novo.')}}
+async function wOff(){if(!confirm('Desconectar o relógio? O atalho para de enviar. Os números que já chegaram continuam guardados.'))return;try{await sb.from('relogio_chaves').delete().eq('user_id',UID)}catch(e){}D.cfg.wOn=0;save();toast('Relógio desconectado');dataS()}
 function gAcc(){const on=PROV.includes('google');scr('Conta Google',`<div class="card"><p class="sm" style="margin:0;opacity:.85">${!GOOGLE?'Em breve você vai poder entrar no Ninho com a sua conta Google e conectar o seu Google Agenda.':on?`Sua conta Google está conectada. Você pode entrar tanto com <b>Continuar com Google</b> quanto com e-mail e senha: os dois abrem o mesmo ninho.`:`Para conectar: saia da conta e, na tela de entrada, toque em <b>Continuar com Google</b> usando o mesmo e-mail (<b>${esc(EM)}</b>). As duas formas de entrar passam a abrir o mesmo ninho.`}</p></div>`,'dataS()')}
 /* Exportação completa: planilha .xlsx (abre no Excel, Numbers e Google Planilhas) */
 const CRC=(()=>{const t=new Uint32Array(256);for(let n=0;n<256;n++){let c=n;for(let k=0;k<8;k++)c=c&1?0xEDB88320^(c>>>1):c>>>1;t[n]=c>>>0}return b=>{let c=~0;for(let i=0;i<b.length;i++)c=t[(c^b[i])&255]^(c>>>8);return(~c)>>>0}})();
@@ -535,7 +560,8 @@ const exames=[['data','exame','grupo','valor','unidade']];[...D.lab].sort((a,b)=
 const rem=[['remédio','forma','horário']];D.meds.forEach(m=>rem.push([m.n,FM[m.f||'comp'][1],m.h||'']));
 const rec=[['recompensa','custo (tarefas)','vezes resgatada']];D.rw.forEach(r=>rec.push([r.t,r.c,r.n||0]));
 const fix=[['tarefa fixa','categoria','prioridade','repetição','desde']];D.fx.forEach(f=>fix.push([f.t,CT[f.c]?CT[f.c][1]:'',PR[f.p]?PR[f.p][0]:'',RT[f.r]||'',br(f.d)]));
-const S=[['Dias',dias],['Tarefas',tarefas],['Tarefas fixas',fix],['Exames',exames],['Remédios',rem],['Recompensas',rec]];
+const rel=[['data','sono (h:min)','sono (min)','passos','batimento médio (bpm)','batimento em repouso (bpm)']];Object.keys(W).sort().forEach(k=>{const w=W[k];rel.push([br(k),hmin(w.sono_min),w.sono_min??'',w.passos??'',w.bpm_medio??'',w.bpm_repouso??''])});
+const S=[['Dias',dias],['Tarefas',tarefas],['Tarefas fixas',fix],['Exames',exames],['Remédios',rem],['Recompensas',rec],...(rel.length>1?[['Relógio',rel]]:[])];
 if(D.cfg.hrt){const r=[['item','forma','horário','a cada (dias)','início do ciclo']];D.hr.forEach(h=>r.push([h.n,FM[h.f||'comp'][1],h.h||'',h.iv,br(h.d)]));S.splice(5,0,['Reposição hormonal',r])}
 const a=document.createElement('a');a.href=URL.createObjectURL(xlsx(S));a.download='ninho-dados-'+TODAY()+'.xlsx';a.click();toast('Planilha baixada ✦')}
 /* Recorrência, períodos e semana */
