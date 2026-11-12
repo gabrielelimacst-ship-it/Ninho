@@ -225,6 +225,7 @@ nav svg{stroke-width:1.7}
 #sh select{width:100%;font-size:16px;padding:13px 16px;border-radius:16px;min-height:50px;background:var(--s1);color:inherit;border:1.5px solid rgba(127,127,127,.12)}
 .wst{display:flex;gap:10px}.wit{flex:1;background:var(--c1);border-radius:18px;padding:12px 10px;display:flex;flex-direction:column;align-items:center;gap:2px;text-align:center}.wit span{font-size:20px}.wit b{font-size:19px}.wit small{font-size:12px;opacity:.6}
 .wkey{font-family:ui-monospace,Menlo,monospace;font-size:12.5px;word-break:break-all;background:var(--s1);border-radius:14px;padding:12px 14px;user-select:all;-webkit-user-select:all}
+.ck{padding:0}.ck>span{display:flex;align-items:center;justify-content:center;width:100%;height:100%;line-height:1}
 .dots i.ev{border-radius:1px;transform:rotate(45deg);width:4.5px;height:4.5px}
 .evh{font-size:11.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;opacity:.6;margin:16px 4px 2px}
 .evr{gap:12px!important;justify-content:flex-start!important}.evt{font-size:13px;font-variant-numeric:tabular-nums;opacity:.75;min-width:58px}.evc{font-size:11px;opacity:.5}
@@ -239,7 +240,7 @@ const ls=(k,v)=>{try{if(v===undefined)return JSON.parse(localStorage.getItem(k))
 let UID=null,EM='',U,D,tab='t',sel=TODAY(),cm=new Date(),mode='in',last='',ft,fc=0,fp='m',fd='',fr=0,lk=0,sh='all',sdx=6;
 const blank=()=>({w:0,ml:[0,0,0],md:{},ex:[],mood:0,sy:[],ev:[],nt:'',hr:{},fg:0,sn:0,bs:[],bo:[]});
 const rd=d=>Object.assign(blank(),D.days[d]),day=(d=TODAY())=>{const x=D.days[d]||(D.days[d]={}),b=blank();for(const k in b)if(x[k]===undefined)x[k]=b[k];return x};
-const CT=[['🏠','Cotidiano'],['🩺','Saúde'],['🧺','Casa'],['🙆','Pessoal'],['💻','Trabalho'],['💰','Finanças'],['🐾','Pet']],PR={b:['Baixa','--bl',5],m:['Média','--md',10],a:['Alta','--al',15]};
+const CT=[['🏠','Cotidiano'],['🩺','Saúde'],['🧺','Casa'],['🙆','Pessoal'],['💻','Trabalho'],['💰','Finanças'],['🐾','Pet'],['📚','Estudo']],PR={b:['Baixa','--bl',5],m:['Média','--md',10],a:['Alta','--al',15]};
 const MS=[['☕','Café'],['🥗','Almoço'],['🍲','Janta']],MO=['😫','☹️','😐','🙂','🥰'],WK=['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
 const SY=[['😠','Irritabilidade'],['🌪️','Ansiedade'],['🎯','Foco'],['😴','Névoa'],['⚡','Impulsividade'],['🦋','Inquietação'],['🌧️','Tristeza'],['😌','Calma'],['🔋','Sem energia'],['🥳','Animação'],['😤','Frustração'],['🫂','Solidão']];
 const BS=[['🔥','Fogachos'],['💦','Suor noturno'],['🥱','Insônia'],['🦴','Dor articular'],['💓','Palpitações'],['🌷','Libido baixa'],['🌸','Secura vaginal'],['🤕','Dor de cabeça'],['🪫','Cansaço no corpo']];
@@ -619,7 +620,7 @@ function rwC(){const p=$('#pp');if(!p)return;p.classList.add('o');setTimeout(()=
 const BGK={t:'tel',h:'med',d:'bk',c:'cal',s:'ch'},BG={t:'',h:'',d:'',c:'',s:''};
 function bgS(){let a=$('#avb');if(!a){a=document.createElement('button');a.id='avb';a.className='av';a.onclick=prof;a.setAttribute('aria-label','Perfil');document.body.appendChild(a)}a.style.cssText=avS();a.innerHTML=avT();const b=$('#bg');if(!b||b.dataset.k==tab)return;b.dataset.k=tab;b.innerHTML=`<div>${BG[tab]?`<img class="il" src="${BG[tab]}" alt="">`:''}</div>`}
 /* Boards compactos de tarefa */
-const CC=['#cfe3e3','#f6d6d6','#e6e0c8','#dcd3f2','#c9dcef','#d5e8c8','#f3dcc4'];let shD=0;
+const CC=['#cfe3e3','#f6d6d6','#e6e0c8','#dcd3f2','#c9dcef','#d5e8c8','#f3dcc4','#d9e4f5'];let shD=0;
 let sgT='Ideia';
 function sgM(){scr('Enviar sugestão',`<div class="card"><p class="sm" style="margin-top:0;opacity:.85">O Ninho está em testes e a sua opinião ajuda muito. Conta o que você achou, o que faltou ou o que deu errado.</p><div class="chips" id="sgc">${['💡 Ideia','🐞 Problema','💛 Elogio'].map(x=>`<button class="chip ${x.includes(sgT)?'on':''}" onclick="sgT='${x.split(' ')[1]}';document.querySelectorAll('#sgc .chip').forEach(c=>c.classList.toggle('on',c==this))">${x}</button>`).join('')}</div><textarea id="sgx" placeholder="Escreva aqui…" maxlength="2000"></textarea><p id="sge" class="sm" style="min-height:16px;margin:8px 4px 0"></p><button class="sgb w" style="margin:0" onclick="sgGo()">Enviar</button></div>`,'prof()')}
 async function sgGo(){const t=$('#sgx').value.trim(),e=m=>$('#sge').textContent=m;if(t.length<3)return e('Escreva um pouquinho mais.');if(PV)return e('Na prévia não dá para enviar. Crie uma conta para mandar sugestões.');e('Enviando…');
