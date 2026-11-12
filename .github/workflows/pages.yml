@@ -23,8 +23,14 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: actions/configure-pages@v5
+      # Monta o site sem o mapa do código e as notas para o Claude
+      - name: Separar os arquivos do site
+        run: |
+          mkdir _site
+          tar -cf - --exclude=./.git --exclude=./.github --exclude=./_site \
+            --exclude=./docs --exclude=./.claude --exclude=./CLAUDE.md . | tar -xf - -C _site
       - uses: actions/upload-pages-artifact@v3
         with:
-          path: .
+          path: _site
       - id: deployment
         uses: actions/deploy-pages@v4
