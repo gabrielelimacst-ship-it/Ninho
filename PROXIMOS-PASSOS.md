@@ -49,7 +49,8 @@ Lista viva do que ficou combinado. Marque com `[x]` o que for concluído.
 - [x] Artifact "Ninho (versão do site)" em modo prévia (sem login, dados só no navegador)
 - [x] Link de prévia para mostrar o app sem login: `…/Ninho/?previa`
 - [x] Botão "Enviar sugestão" no Perfil (vai para a tabela `sugestoes`)
-- [ ] Rodar `supabase/sql/sugestoes.sql` no SQL Editor
+- [x] Rodar `supabase/sql/sugestoes.sql` no SQL Editor
+- [ ] Aviso por e-mail a cada sugestão: segredos do Gmail, função `aviso-sugestao` e webhook
 - [x] Recompensas de exemplo com 150, 100 e 50
 - [x] Manter o artifact antigo "Ninho."
 - [x] Atualizar o artifact "Ninho (versão do site)"
