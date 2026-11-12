@@ -13,7 +13,16 @@ const json = (b: unknown, status = 200) =>
   new Response(JSON.stringify(b), { status, headers: { ...CORS, "Content-Type": "application/json" } });
 
 const SB_URL = Deno.env.get("SUPABASE_URL") || "";
-const SRV = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") || "";
+// Chave de servidor: formato novo (SUPABASE_SECRET_KEYS) ou antigo (SERVICE_ROLE)
+function chaveServidor(): string {
+  try {
+    const novas = JSON.parse(Deno.env.get("SUPABASE_SECRET_KEYS") || "{}");
+    const v = Object.values(novas)[0];
+    if (typeof v === "string" && v) return v;
+  } catch (_) { /* sem chaves novas */ }
+  return Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") || "";
+}
+const SRV = chaveServidor();
 const hdr = (extra: Record<string, string> = {}) => {
   const h: Record<string, string> = { apikey: SRV, "Content-Type": "application/json", ...extra };
   if (!SRV.startsWith("sb_")) h.Authorization = "Bearer " + SRV;
@@ -54,7 +63,8 @@ Deno.serve(async (req) => {
   if (chave.length < 20) return json({ ok: false, msg: "Chave ausente" }, 401);
 
   const q = await fetch(SB_URL + "/rest/v1/relogio_chaves?select=user_id&chave_hash=eq." + (await sha(chave)), { headers: hdr() });
-  const achou = q.ok ? await q.json() : [];
+  if (!q.ok) return json({ ok: false, msg: "Sem acesso ao banco", status: q.status }, 500);
+  const achou = await q.json();
   if (!achou.length) return json({ ok: false, msg: "Chave nao reconhecida. Gere uma nova no Ninho." }, 401);
 
   const hoje = new Date(Date.now() - 3 * 3600e3).toISOString().slice(0, 10); // horario de Brasilia
