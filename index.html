@@ -469,12 +469,32 @@ function ts(k,i,el){const d=day(),n=k=='sy'?SY[i][1]:k=='bs'?BS[i][1]:D.ev[i],a=
 function addE(){const n=$('#ei').value.trim();if(!n)return;if(!D.ev.includes(n))D.ev.push(n);const d=day();if(!d.ev.includes(n))d.ev.push(n);save();render(1)}
 function regD(e){const d=day();save();if(!d.reg){d.reg=1;save();conf('d',1,10,e.currentTarget);toast('Dia registrado ✦')}else{snd('ok');toast('Diário atualizado ✦')}}
 /* Agenda */
+/* Revisão do dia: na Agenda, o dia escolhido pode ser marcado e corrigido */
+function rvV(){const T=TODAY(),s=rd(sel),g=D.cfg.goal,es=evDay(sel),ts=tdy(sel),Q=doses(sel),H=D.cfg.hrt?D.hr.filter(h=>{const n=dd(h.d,sel);return n>=0&&n%h.iv==0}):[],
+tit=`<div class="lb">${new Date(sel+'T12:00').toLocaleDateString('pt-BR',{weekday:'long',day:'numeric',month:'long'})}</div>`,
+ev=es.length?`<div class="evh">Compromissos</div>${es.map(e=>`<div class="mr evr"><span class="evt">${e.ad?'Dia todo':hm(e.s)}</span><span style="flex:1">${esc(e.t)}</span><span class="evc">${e.cal=='apple'?'Apple':'Google'}</span></div>`).join('')}`:'';
+if(sel>T)return tit+`<p class="sm">Este dia ainda não chegou. Quando chegar, você marca aqui o que aconteceu.</p>${ev}${ts.length?`<div class="evh">Tarefas planejadas</div>${ts.map(t=>`<div class="mr"><span>${CT[t.c][0]} ${esc(t.t)}</span></div>`).join('')}`:''}`;
+return tit+`<p class="sm">${sel==T?'Marque aqui como está sendo o seu dia.':'Toque para revisar o que aconteceu neste dia.'}</p>
+<div class="evh">Humor</div><div class="moods">${MO.map((e,i)=>`<button class="mo ${s.mood==i+1?'on':''}" onclick="rvM(${i+1})" aria-label="Humor ${i+1}">${e}</button>`).join('')}</div>
+<div class="evh">Água</div><div class="mr"><button class="rb" onclick="rvW(-1)" aria-label="Menos água">−</button><b style="font-size:17px">${s.w}/${g} copos</b><button class="rb" onclick="rvW(1)" aria-label="Mais água">+</button></div>
+<div class="evh">Refeições</div><div class="mls">${MS.map(([e,n],i)=>`<div class="row mr" style="gap:14px;justify-content:flex-start">${ck(s.ml[i],`rvR(${i})`)}<span style="font-size:14px;font-weight:500">${e} ${n}</span></div>`).join('')}</div>
+${Q.length?`<div class="evh">Remédios</div>${Q.map((x,i)=>`<div class="mr"><div>${esc(x.m.n)}${x.h?`<div class="sm">${x.h}</div>`:''}</div>${ck(s.md[x.k],`rvD(${i})`,0,x.m.f)}</div>`).join('')}`:''}
+${H.length?`<div class="evh">Reposição hormonal</div>${H.map(h=>`<div class="mr"><div>${esc(h.n)}${h.h?`<div class="sm">${h.h}</div>`:''}</div>${ck((s.hr||{})[h.id],`rvH(${h.id})`,0,h.f)}</div>`).join('')}`:''}
+${ev}<div class="evh">Tarefas</div>${ts.map(t=>`<div class="mr"><span style="flex:1;${t.x?'text-decoration:line-through;opacity:.5':''}">${CT[t.c][0]} ${esc(t.t)}</span>${ck(t.x,`rvT(${t.id})`)}</div>`).join('')||'<p class="sm">Sem tarefas neste dia.</p>'}
+<div class="evh">Anotação</div><textarea placeholder="Como foi esse dia?" oninput="day(sel).nt=this.value;save()">${esc(s.nt)}</textarea>`}
+const rvOk=(on,xp)=>{if(xp)D.xp=Math.max(0,D.xp+(on?xp:-xp));save();snd(on?'ok':'t');vibr();render(1)};
+function rvM(n){const d=day(sel);d.mood=d.mood==n?0:n;rvOk(d.mood)}
+function rvW(n){const d=day(sel),a=d.w;d.w=Math.min(24,Math.max(0,a+n));if(d.w!=a)rvOk(n>0,2)}
+function rvR(i){const d=day(sel);d.ml[i]=d.ml[i]?0:1;rvOk(d.ml[i],3)}
+function rvD(i){const x=doses(sel)[i];if(!x)return;const d=day(sel);d.md[x.k]=!d.md[x.k];rvOk(d.md[x.k],5)}
+function rvH(id){const d=day(sel);d.hr[id]=!d.hr[id];rvOk(d.hr[id],5)}
+function rvT(id){const t=D.tasks.find(x=>x.id==id);if(!t)return;t.x=t.x?0:1;if(t.x)t.dt=sel;else delete t.dt;rvOk(t.x,PR[t.p][2])}
 function calV(){evGet();const y=cm.getFullYear(),m=cm.getMonth(),f=new Date(y,m,1).getDay(),n=new Date(y,m+1,0).getDate(),g=D.cfg.goal;let c='';for(let i=0;i<f;i++)c+='<span></span>';
 for(let k=1;k<=n;k++){const id=`${y}-${pad(m+1)}-${pad(k)}`,d=rd(id),dn=D.tasks.some(t=>t.dt==id),all=(q=>q.length&&q.every(x=>d.md[x.k]))(doses(id)),ev=evDay(id).length;c+=`<button class="cd ${id==TODAY()?'t':''} ${id==sel?'sel':''}" onclick="sel='${id}';render(1)">${k}<span class="dots">${dn?'<i></i>':''}${all?'<i class="o"></i>':''}${d.w>=g?'<i style="border-radius:1px"></i>':''}${ev?'<i class="ev"></i>':''}</span><span class="mb" style="width:${d.mood*16}%"></span></button>`}
 const s=rd(sel),ts=D.tasks.filter(t=>t.d==sel||t.dt==sel),es=evDay(sel),pre=`${y}-${pad(m+1)}`,mt=D.tasks.filter(t=>(t.dt||'').startsWith(pre)).length;
 return A(hero('Este mês',`${mt} tarefa(s) feita(s)`,cm.toLocaleDateString('pt-BR',{month:'long',year:'numeric'}),'cal'),
 `<div class="row sp" style="margin-bottom:12px"><button class="rb" onclick="cmv(-1)" aria-label="Mês anterior">‹</button><span class="sm">● tarefa · ○ remédios · ▪ água${calOn()?' · ◆ compromisso':''} · barra = humor</span><button class="rb" onclick="cmv(1)" aria-label="Próximo mês">›</button></div><div class="cal sm">${'DSTQQSS'.split('').map(x=>`<span>${x}</span>`).join('')}</div><div class="cal" style="margin-top:4px">${c}</div>`,
-`<div class="lb">${new Date(sel+'T12:00').toLocaleDateString('pt-BR',{weekday:'long',day:'numeric',month:'long'})}</div><p class="sm">${s.mood?'Humor: '+MO[s.mood-1]+' · ':''}Água: ${s.w}/${g} · Remédios: ${(q=>q.filter(x=>s.md[x.k]).length+'/'+q.length)(doses(sel))}</p>${es.length?`<div class="evh">Compromissos</div>${es.map(e=>`<div class="mr evr"><span class="evt">${e.ad?'Dia todo':hm(e.s)}</span><span style="flex:1">${esc(e.t)}</span><span class="evc">${e.cal=='apple'?'Apple':'Google'}</span></div>`).join('')}<div class="evh">Tarefas</div>`:''}${ts.map(t=>`<div class="mr" style="font-size:16px"><span class="${t.x?'done':''}">${t.x?'✓ ':''}${esc(t.t)}</span></div>`).join('')||'<p class="sm">Sem tarefas neste dia.</p>'}${s.nt?`<p class="sm">“${esc(s.nt.slice(0,160))}”</p>`:''}`,
+rvV(),
 calOn()?`<div class="row sp"><span class="sm">${evL?'Buscando sua agenda…':EV&&EV.err?'⚠️ '+EV.err:EV&&EV.at?'Agenda atualizada às '+hm(EV.at):''}</span><button class="gb" onclick="evGet(1);render(1)">Atualizar</button></div>`:`<div class="lb">Google e Apple</div><p class="sm" style="opacity:.8">Veja aqui os eventos das suas agendas do Google e da Apple.</p><button class="sgb w" onclick="prof();dataS()">Conectar agendas</button>`)}
 function cmv(n){cm=new Date(cm.getFullYear(),cm.getMonth()+n,1);render(1)}
 function ics(){const L=['BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//Ninho//PT'];D.tasks.forEach(t=>{const s=t.d.replace(/-/g,'');L.push('BEGIN:VEVENT','UID:ninho'+t.id+'@ninho','DTSTAMP:'+s+'T000000Z','DTSTART;VALUE=DATE:'+s,'SUMMARY:'+(t.x?'✓ ':'')+t.t.replace(/[,;\n]/g,' '),'END:VEVENT')});L.push('END:VCALENDAR');const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([L.join('\r\n')],{type:'text/calendar'}));a.download='ninho-tarefas.ics';a.click()}
