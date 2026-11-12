@@ -31,6 +31,9 @@ Lista viva do que ficou combinado. Marque com `[x]` o que for concluído.
   - [ ] Junto: ícone e nome próprios na Tela de Início
 
 ## 3. Melhorias para depois
+- [ ] Agenda: separar as tarefas do dia por período, de forma minimalista (MANHÃ ———, TARDE ———, NOITE ———)
+- [ ] Lista de desejos conectada às recompensas (ex.: um desejo vira recompensa com custo em tarefas)
+- [ ] Área de leitura, filmes e games (o que quero ver/ler/jogar e o que já terminei)
 - [ ] Ajustar o layout do e-mail de sugestão (chegou, mas o visual ficou ruim)
 - [ ] Sugestões chegarem no WhatsApp Business
       (caminhos: API oficial do WhatsApp Business, que exige conta Meta e modelo de mensagem
