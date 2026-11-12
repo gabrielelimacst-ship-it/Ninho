@@ -7,12 +7,12 @@ Lista viva do que ficou combinado. Marque com `[x]` o que for concluído.
 - [x] Supabase → Authentication → URL Configuration: trocar o **Site URL** para
       `https://gabrielelimacst-ship-it.github.io/Ninho/` e adicionar o mesmo em **Redirect URLs**
 - [x] Entrar no app com e-mail e senha (a conta já deve estar confirmada)
-- [ ] Fazer o merge do PR #5 (eventos do Google e da Apple na Agenda)
-- [ ] Conectar as agendas: Perfil → Conexões e dados → Google Agenda / Apple Calendário
-- [ ] Testar: entrar com Google (mesmo Gmail) e ver se abre o mesmo ninho
-- [ ] Testar a vibração no iPhone (precisa de iOS 18 ou mais novo)
-- [ ] Testar a sincronização: anotar algo no celular e conferir no computador
-- [ ] Decidir: qualquer pessoa pode criar conta **ou** só convidados
+- [x] Conectar as agendas
+- [x] Testar: entrar com Google (mesmo Gmail) e ver se abre o mesmo ninho
+- [ ] Testar a vibração no iPhone de novo (nova tentativa; precisa de iOS 18+ e "Tátil do Sistema" ligado)
+- [x] Testar a sincronização
+- [x] Testar as novidades do PR #7
+- [x] Decidir: qualquer pessoa pode criar conta (decidido: aberto)
       (Authentication → Sign In / Providers → "Allow new users to sign up")
 
 ## 2. E-mails com cara de Ninho
@@ -25,7 +25,8 @@ Lista viva do que ficou combinado. Marque com `[x]` o que for concluído.
 
 ## 3. Login
 - [x] Login com Google
-- [ ] (Opcional) Trazer de volta o "entrar sem senha" por link no e-mail
+- [x] Entrar sem senha com código por e-mail (autopreenche no celular)
+- [ ] Colar o modelo `emails/codigo.html` em Magic Link e atualizar o Confirm signup
 
 ## 4. Relógio Xiaomi (Mi Fitness) — combinado para outro momento
 - [ ] **A. Dados do relógio no Ninho**: Mi Fitness → app Saúde do iPhone → atalho
@@ -37,7 +38,7 @@ Lista viva do que ficou combinado. Marque com `[x]` o que for concluído.
       de Início) com envio programado pelo Supabase; o relógio espelha as do iPhone
   - [ ] Começar por remédios, reposição hormonal e água
 
-## 4. Sugestões para depois
+## 5. Sugestões para depois
 - [ ] Ícone e nome próprios ao adicionar à Tela de Início do celular
 - [ ] Endereço próprio (ex.: `meuninho.com.br`) — opcional, ~R$ 40/ano
 - [x] Avisar quando o mesmo ninho for mudado em dois aparelhos ao mesmo tempo
@@ -48,8 +49,12 @@ Lista viva do que ficou combinado. Marque com `[x]` o que for concluído.
 - [ ] (Depois) Mostrar compromissos de hoje também na aba Tarefas
 - [ ] (Depois) Transformar um compromisso em tarefa
 - [x] Artifact "Ninho (versão do site)" em modo prévia (sem login, dados só no navegador)
-- [ ] Decidir se apaga o artifact antigo "Ninho."
-- [ ] Atualizar o artifact "Ninho (versão do site)" com as últimas mudanças
+- [x] Link de prévia para mostrar o app sem login: `…/Ninho/?previa`
+- [x] Botão "Enviar sugestão" no Perfil (vai para a tabela `sugestoes`)
+- [ ] Rodar `supabase/sql/sugestoes.sql` no SQL Editor
+- [x] Recompensas de exemplo com 150, 100 e 50
+- [x] Manter o artifact antigo "Ninho."
+- [x] Atualizar o artifact "Ninho (versão do site)"
 
 ## Lembretes
 - No iPhone, pelo ícone da Tela de Início, entre com **e-mail e senha**
