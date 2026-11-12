@@ -7,13 +7,12 @@ Lista viva do que ficou combinado. Marque com `[x]` o que for concluído.
 - [x] Supabase → Authentication → URL Configuration: trocar o **Site URL** para
       `https://gabrielelimacst-ship-it.github.io/Ninho/` e adicionar o mesmo em **Redirect URLs**
 - [x] Entrar no app com e-mail e senha (a conta já deve estar confirmada)
-- [ ] Conectar as agendas: Perfil → Conexões e dados → Google Agenda / Apple Calendário
-- [ ] Testar: entrar com Google (mesmo Gmail) e ver se abre o mesmo ninho
-- [ ] Testar a vibração no iPhone (precisa de iOS 18 ou mais novo)
-- [ ] Testar a sincronização: anotar algo no celular e conferir no computador
-- [ ] Testar as novidades do PR #7: rolagem antes do menu, sons, cronômetro,
-      sugestão de recompensa, exames e planilha completa
-- [ ] Decidir: qualquer pessoa pode criar conta **ou** só convidados
+- [x] Conectar as agendas
+- [x] Testar: entrar com Google (mesmo Gmail) e ver se abre o mesmo ninho
+- [ ] Testar a vibração no iPhone de novo (nova tentativa; precisa de iOS 18+ e "Tátil do Sistema" ligado)
+- [x] Testar a sincronização
+- [x] Testar as novidades do PR #7
+- [x] Decidir: qualquer pessoa pode criar conta (decidido: aberto)
       (Authentication → Sign In / Providers → "Allow new users to sign up")
 
 ## 2. E-mails com cara de Ninho
@@ -26,7 +25,8 @@ Lista viva do que ficou combinado. Marque com `[x]` o que for concluído.
 
 ## 3. Login
 - [x] Login com Google
-- [ ] (Opcional) Trazer de volta o "entrar sem senha" por link no e-mail
+- [x] Entrar sem senha com código por e-mail (autopreenche no celular)
+- [ ] Colar o modelo `emails/codigo.html` em Magic Link e atualizar o Confirm signup
 
 ## 4. Relógio Xiaomi (Mi Fitness) — combinado para outro momento
 - [ ] **A. Dados do relógio no Ninho**: Mi Fitness → app Saúde do iPhone → atalho
@@ -50,10 +50,11 @@ Lista viva do que ficou combinado. Marque com `[x]` o que for concluído.
 - [ ] (Depois) Transformar um compromisso em tarefa
 - [x] Artifact "Ninho (versão do site)" em modo prévia (sem login, dados só no navegador)
 - [x] Link de prévia para mostrar o app sem login: `…/Ninho/?previa`
-- [ ] Botão "Enviar sugestão" no Perfil para quem testa a beta (decidir o canal)
-- [ ] Ajustar as 3 recompensas de exemplo (custam 10, 5 e 3) para o mínimo de 50
-- [ ] Decidir se apaga o artifact antigo "Ninho."
-- [ ] Atualizar o artifact "Ninho (versão do site)" com as últimas mudanças
+- [x] Botão "Enviar sugestão" no Perfil (vai para a tabela `sugestoes`)
+- [ ] Rodar `supabase/sql/sugestoes.sql` no SQL Editor
+- [x] Recompensas de exemplo com 150, 100 e 50
+- [x] Manter o artifact antigo "Ninho."
+- [x] Atualizar o artifact "Ninho (versão do site)"
 
 ## Lembretes
 - No iPhone, pelo ícone da Tela de Início, entre com **e-mail e senha**
