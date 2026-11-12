@@ -381,7 +381,7 @@ const V={t:['Tarefas',tasksV],h:['Saúde',healthV],c:['Agenda',calV],d:['Meu Di�
 function nvH(){const n=$('#nav');if(!n||!n.firstChild)return;document.documentElement.style.setProperty('--navH',n.offsetHeight+'px')}
 addEventListener('resize',nvH);
 function render(q){spawn();if(D.tm&&D.tm.st&&!tmI)tmTick();bgS();glSync();const[t,f]=V[tab];$('#hd').innerHTML=hdr(t);$('#v').className=q?'q':'';$('#v').innerHTML=skin(f());document.querySelectorAll('nav button').forEach(b=>b.classList.toggle('on',b.dataset.k==tab));if(q)last='';nvH()}
-function go2(k){if(k==tab)return;const p=$('#pg');p.classList.add('o');setTimeout(()=>{tab=k;render();scrollTo(0,0);$('#app').scrollTo(0,0);p.classList.remove('o');if(k=='t')setTimeout(visit,450)},220)}
+function go2(k){if(k==tab)return;const p=$('#pg');p.classList.add('o');setTimeout(()=>{tab=k;if(k=='d')dj='';render();scrollTo(0,0);$('#app').scrollTo(0,0);p.classList.remove('o');if(k=='t')setTimeout(visit,450)},220)}
 let BK=null;function openM(h,bk){BK=bk||null;$('#sh').innerHTML=skin(h);$('#md').classList.add('s')}
 function mdBack(){BK?Function(BK)():closeM()}
 function closeM(){$('#md').classList.remove('s');$('#sh').style.transform='';if(D)render(1)}
@@ -455,20 +455,23 @@ const o={n,f:mf,fq:mfq,h:hs[0]||'',hs};if(mfq=='w')o.dw=mdw.slice();if(mfq=='x')
 function dM(j){D.meds.splice(j,1);save();$('#ml').innerHTML=medL()}
 /* Diário */
 const chip=(k,i,e,n,d)=>`<button class="chip ${d[k].includes(n)?'on':''}" onclick="ts('${k}',${i},this)">${e} ${esc(n)}</button>`;
-function wCard(){const w=W[TODAY()]||{},ok=w.passos!=null||w.sono_min||w.bpm_repouso||w.bpm_medio;if(!D.cfg.wOn&&!ok)return'';
+function wCard(J=TODAY()){const w=W[J]||{},ok=w.passos!=null||w.sono_min||w.bpm_repouso||w.bpm_medio;if(!D.cfg.wOn&&!ok)return'';
 const it=[w.sono_min?`<div class="wit"><span>😴</span><b>${hmin(w.sono_min)}</b><small>de sono</small></div>`:'',w.passos!=null?`<div class="wit"><span>👣</span><b>${nPt(w.passos)}</b><small>passos</small></div>`:'',w.bpm_repouso||w.bpm_medio?`<div class="wit"><span>❤️</span><b>${w.bpm_repouso||w.bpm_medio}</b><small>bpm ${w.bpm_repouso?'em repouso':'em média'}</small></div>`:''].join('');
-return`<div class="lb">⌚ Do seu relógio</div>${ok?`<div class="wst">${it}</div><p class="sm" style="margin:10px 0 0">Atualizado às ${hm(w.atualizado_em)}</p>`:'<p class="sm" style="margin:0">Ainda sem dados de hoje. O atalho manda os números do dia no horário que você escolheu.</p>'}`}
-function diaryV(){const d=rd(TODAY());wGet();
-return A(hero('Hoje','Como foi o dia?','Sem certo ou errado. Só registre.','bk'),...[wCard()].filter(Boolean),
-`<div class="lb">Como você está agora?</div><div class="moods">${MO.map((e,i)=>`<button class="mo ${d.mood==i+1?'on':''}" onclick="sm(${i+1})" aria-label="Humor ${i+1}">${e}</button>`).join('')}</div>`,
+return`<div class="lb">⌚ Do seu relógio</div>${ok?`<div class="wst">${it}</div><p class="sm" style="margin:10px 0 0">Atualizado às ${hm(w.atualizado_em)}</p>`:`<p class="sm" style="margin:0">${J==TODAY()?'Ainda sem dados de hoje. O atalho manda os números do dia no horário que você escolheu.':'Sem dados do relógio neste dia.'}</p>`}`}
+/* Diário: dj é o dia que está sendo visto ou corrigido ('' = hoje) */
+let dj='';const DJ=()=>lastN(7).includes(dj)?dj:TODAY();
+function diaryV(){const J=DJ(),T=J==TODAY(),d=rd(J),nome=new Date(J+'T12:00').toLocaleDateString('pt-BR',{weekday:'long',day:'numeric',month:'long'});wGet();
+return A(hero(T?'Hoje':nome,T?'Como foi o dia?':'Como foi esse dia?',T?'Sem certo ou errado. Só registre.':'Você está revendo um dia que já passou. Ajuste o que quiser.','bk'),
+`<div class="row" style="gap:6px">${lastN(7).map((id,i)=>`<button class="pl dw ${id==J?'on':''}" onclick="dj='${id}';snd('t');render(1)" aria-label="${i==6?'Hoje':new Date(id+'T12:00').toLocaleDateString('pt-BR',{weekday:'long',day:'numeric'})}">${i==6?'hoje':WK[new Date(id+'T12:00').getDay()].toLowerCase()}<small>${+id.slice(8)}</small></button>`).join('')}</div>`,
+...[wCard(J)].filter(Boolean),
+`<div class="lb">${T?'Como você está agora?':'Como você estava?'}</div><div class="moods">${MO.map((e,i)=>`<button class="mo ${d.mood==i+1?'on':''}" onclick="sm(${i+1})" aria-label="Humor ${i+1}">${e}</button>`).join('')}</div>`,
 `<div class="lb">Sensações</div><div class="chips w" style="margin:0">${SY.map(([e,n],i)=>chip('sy',i,e,n,d)).join('')}</div>`,
 `<div class="lb">Eventos e comportamentos</div><div class="chips w" style="margin-top:0">${D.ev.map((n,i)=>chip('ev',i,'',n,d)).join('')}</div><div class="row"><input id="ei" placeholder="Ex: Notícia ruim, Presente..." onkeydown="if(event.key=='Enter')addE()"><button class="bt" onclick="addE()">Add</button></div>`,
-`<div class="lb">Notas</div><textarea placeholder="Algum outro detalhe ou pensamento?" oninput="day().nt=this.value;save()">${esc(d.nt)}</textarea><button class="sgb w" style="margin-top:16px" onclick="regD(event)">Registrar diário</button>`)}
-function sm(n){day().mood=n;save();snd('t');vibr();render(1)}
-function ts(k,i,el){const d=day(),n=k=='sy'?SY[i][1]:k=='bs'?BS[i][1]:D.ev[i],a=d[k];d[k]=a.includes(n)?a.filter(x=>x!=n):[...a,n];el.classList.toggle('on');save();snd('t');vibr()}
-function addE(){const n=$('#ei').value.trim();if(!n)return;if(!D.ev.includes(n))D.ev.push(n);const d=day();if(!d.ev.includes(n))d.ev.push(n);save();render(1)}
-function regD(e){const d=day();save();if(!d.reg){d.reg=1;save();conf('d',1,10,e.currentTarget);toast('Dia registrado ✦')}else{snd('ok');toast('Diário atualizado ✦')}}
-/* Agenda */
+`<div class="lb">Notas</div><textarea placeholder="Algum outro detalhe ou pensamento?" oninput="day(DJ()).nt=this.value;save()">${esc(d.nt)}</textarea><button class="sgb w" style="margin-top:16px" onclick="regD(event)">${T?'Registrar diário':'Salvar este dia'}</button>`)}
+function sm(n){day(DJ()).mood=n;save();snd('t');vibr();render(1)}
+function ts(k,i,el){const d=k=='bs'?day():day(DJ()),n=k=='sy'?SY[i][1]:k=='bs'?BS[i][1]:D.ev[i],a=d[k];d[k]=a.includes(n)?a.filter(x=>x!=n):[...a,n];el.classList.toggle('on');save();snd('t');vibr()}
+function addE(){const n=$('#ei').value.trim();if(!n)return;if(!D.ev.includes(n))D.ev.push(n);const d=day(DJ());if(!d.ev.includes(n))d.ev.push(n);save();render(1)}
+function regD(e){const J=DJ(),d=day(J);save();if(!d.reg){d.reg=1;if(J==TODAY())conf('d',1,10,e.currentTarget);else{D.xp+=10;save();snd('ok');vibr()}toast('Dia registrado ✦')}else{snd('ok');toast('Diário atualizado ✦')}}
 /* Revisão do dia: na Agenda, o dia escolhido pode ser marcado e corrigido */
 function rvV(){const T=TODAY(),s=rd(sel),g=D.cfg.goal,es=evDay(sel),ts=tdy(sel),Q=doses(sel),H=D.cfg.hrt?D.hr.filter(h=>{const n=dd(h.d,sel);return n>=0&&n%h.iv==0}):[],
 tit=`<div class="lb">${new Date(sel+'T12:00').toLocaleDateString('pt-BR',{weekday:'long',day:'numeric',month:'long'})}</div>`,
