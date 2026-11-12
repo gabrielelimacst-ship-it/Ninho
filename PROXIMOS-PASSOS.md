@@ -4,8 +4,9 @@ Lista viva do que ficou combinado. Marque com `[x]` o que for concluído.
 Última revisão: 12/11/2026.
 
 ## 1. Testes rápidos (só você)
+- [ ] Atualizar o código da função `aviso-sugestao` no Supabase para a versão 3
+      (agora é o app que chama a função; o gatilho no banco não é mais usado)
 - [ ] Mandar uma sugestão pelo app (Perfil → Enviar sugestão) e ver se o e-mail chega
-      (a função `aviso-sugestao` e o gatilho no banco já estão no ar)
 - [ ] Entrar com código por e-mail e ver se o código aparece sozinho em cima do teclado
 - [ ] "Esqueci minha senha": o e-mail deve chegar de "Ninho", em português
 - [ ] Vibração no iPhone (nova tentativa; precisa de iOS 18+ e Ajustes → Sons e Tátil → "Tátil do Sistema")
