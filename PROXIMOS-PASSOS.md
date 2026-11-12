@@ -11,7 +11,7 @@ Lista viva do que ficou combinado. Marque com `[x]` o que for concluído.
 - [ ] Vibração no iPhone (nova tentativa; precisa de iOS 18+ e Ajustes → Sons e Tátil → "Tátil do Sistema")
 - [ ] Remédios com frequência: cadastrar um de dias da semana e um com dois horários
 - [ ] Tom de pele dos emojis (Perfil → Interface)
-- [ ] Agenda: tocar num dia e marcar/desmarcar uma tarefa da lista
+- [ ] Revisão do dia na Agenda: tocar num dia passado e marcar humor, água, remédios e tarefas
 
 ## 2. Relógio Xiaomi — combinado para depois
 - [x] Código pronto: função `relogio`, tabelas, chave pessoal, cartão no Diário,
@@ -37,7 +37,7 @@ Lista viva do que ficou combinado. Marque com `[x]` o que for concluído.
 ## Já feito ✓
 - Site no GitHub Pages, contas reais com dados na nuvem (Supabase)
 - Login: e-mail e senha, Google, código por e-mail; e-mails em português pelo Gmail
-- Agenda: eventos do Google e da Apple; tarefas clicáveis no dia escolhido
+- Agenda: eventos do Google e da Apple; revisão do dia (itens clicáveis no dia escolhido)
 - Tarefas: categorias Pet e Estudo, troca de categoria pelo emoji, cronômetro
 - Recompensas com sugestão pela média (mínimo 50)
 - Saúde: remédios com frequência e vários horários, exames de sangue amplos,
