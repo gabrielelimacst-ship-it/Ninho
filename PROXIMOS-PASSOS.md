@@ -4,8 +4,6 @@ Lista viva do que ficou combinado. Marque com `[x]` o que for concluído.
 Última revisão: 12/11/2026.
 
 ## 1. Testes rápidos (só você)
-- [ ] Atualizar o código da função `aviso-sugestao` no Supabase para a versão 3
-      (agora é o app que chama a função; o gatilho no banco não é mais usado)
 - [ ] Mandar uma sugestão pelo app (Perfil → Enviar sugestão) e ver se o e-mail chega
 - [ ] Entrar com código por e-mail e ver se o código aparece sozinho em cima do teclado
 - [ ] "Esqueci minha senha": o e-mail deve chegar de "Ninho", em português
@@ -13,6 +11,7 @@ Lista viva do que ficou combinado. Marque com `[x]` o que for concluído.
 - [ ] Remédios com frequência: cadastrar um de dias da semana e um com dois horários
 - [ ] Tom de pele dos emojis (Perfil → Interface)
 - [ ] Revisão do dia na Agenda: tocar num dia passado e marcar humor, água, remédios e tarefas
+- [ ] Diário: faixa dos 7 dias no topo para rever e corrigir humor, sensações, eventos e notas
 
 ## 2. Relógio Xiaomi — combinado para depois
 - [x] Código pronto: função `relogio`, tabelas, chave pessoal, cartão no Diário,
