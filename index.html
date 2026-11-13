@@ -412,7 +412,7 @@ const cy=820,r=250;x.lineWidth=34;x.lineCap='round';x.strokeStyle=dark?'#2a2a2a'
 x.strokeStyle=dark?'#e6e2d3':'#111';x.beginPath();x.arc(W/2,cy,r,-Math.PI/2,-Math.PI/2+2*Math.PI*Math.max(pc,.001));x.stroke();
 ctr(dn+'/'+L.length,cy+40,'600 150px '+F,fg);ctr('tarefas',cy+110,'700 40px '+N,mu);
 wrap(`Você fez ${dn} ${dn==1?'tarefa':'tarefas'} de ${L.length} hoje`,1200,'600 64px '+F,fg,80);
-if(d.mood)ctr(`${MO[d.mood-1]} humor do dia`,1390,'600 40px '+N,mu);
+
 wrap('“'+pick(STF)+'”',1560,'500 52px '+F,fg,70);
 ctr('feito no Ninho ✦',1800,'700 32px '+N,mu);
 c.toBlob(async b=>{const f=new File([b],'ninho-resumo.png',{type:'image/png'});
