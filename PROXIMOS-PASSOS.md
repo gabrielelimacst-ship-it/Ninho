@@ -32,9 +32,10 @@ Lista viva do que ficou combinado. Marque com `[x]` o que for concluído.
   - [ ] Junto: ícone e nome próprios na Tela de Início
 
 ## 3. Melhorias para depois
-- [ ] Resumo do dia (stories): voltar a mostrar o humor? Opções vistas: A emoji grande, B pílula "Me senti bem 🙂", C "Me senti bem." em itálico
+- [ ] Resumo do dia para stories: retirado em 13/11; se voltar, decidir o humor (A emoji grande, B pílula, C itálico)
 - [ ] Agenda: separar as tarefas do dia por período, de forma minimalista (MANHÃ ———, TARDE ———, NOITE ———)
-- [ ] Lista de desejos conectada às recompensas (ex.: um desejo vira recompensa com custo em tarefas)
+- [x] Lista de desejos com link (Perfil → Lista de desejos)
+- [ ] Conectar desejos às recompensas (um desejo vira recompensa com custo em tarefas)
 - [ ] Área de leitura, filmes e games (o que quero ver/ler/jogar e o que já terminei)
 - [ ] Ajustar o layout do e-mail de sugestão (chegou, mas o visual ficou ruim)
 - [ ] Sugestões chegarem no WhatsApp Business
