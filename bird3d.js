@@ -22,47 +22,56 @@ function parte(geo, cor, contorno, borda = 1.07) {
 }
 
 function asaGeo() {
+  // asa longa e pontuda, como a asa dobrada do desenho, com a ponta em degraus de penas
   const s = new THREE.Shape();
-  s.moveTo(0, -0.28); s.bezierCurveTo(0.5, -0.32, 1.4, -0.2, 2.1, 0.1);
-  s.lineTo(1.75, 0.18); s.lineTo(1.95, 0.36); s.lineTo(1.5, 0.34); s.lineTo(1.6, 0.55);
-  s.lineTo(1.1, 0.46); s.bezierCurveTo(0.7, 0.5, 0.3, 0.42, 0, 0.3); s.closePath();
-  const g = new THREE.ExtrudeGeometry(s, { depth: 0.07, bevelEnabled: true, bevelSize: 0.03, bevelThickness: 0.03, bevelSegments: 1, curveSegments: 10 });
-  g.translate(0, 0, -0.035); g.rotateX(Math.PI / 2); return g;
+  s.moveTo(0, -0.3); s.bezierCurveTo(0.6, -0.36, 1.6, -0.22, 2.5, 0.05);
+  s.lineTo(2.1, 0.16); s.lineTo(2.3, 0.3); s.lineTo(1.85, 0.32); s.lineTo(2.0, 0.48); s.lineTo(1.5, 0.46); s.lineTo(1.55, 0.6);
+  s.bezierCurveTo(1.0, 0.62, 0.4, 0.5, 0, 0.32); s.closePath();
+  const g = new THREE.ExtrudeGeometry(s, { depth: 0.06, bevelEnabled: true, bevelSize: 0.025, bevelThickness: 0.025, bevelSegments: 1, curveSegments: 10 });
+  g.translate(0, 0, -0.03); g.rotateX(Math.PI / 2); return g;
 }
 function caudaGeo() {
+  // cauda comprida e fina, como no desenho
   const s = new THREE.Shape();
-  s.moveTo(0, -0.12); s.lineTo(-1.25, -0.42); s.lineTo(-1.35, -0.18); s.lineTo(-1.42, 0.06); s.lineTo(-1.3, 0.3); s.lineTo(0, 0.14); s.closePath();
-  const g = new THREE.ExtrudeGeometry(s, { depth: 0.06, bevelEnabled: false });
-  g.translate(0, 0, -0.03); return g;
+  s.moveTo(0.1, -0.3); s.bezierCurveTo(-0.6, -0.3, -1.4, -0.2, -2.0, -0.05); s.lineTo(-1.85, 0.06); s.bezierCurveTo(-1.3, 0.12, -0.6, 0.2, 0.1, 0.25); s.closePath();
+  const g = new THREE.ExtrudeGeometry(s, { depth: 0.3, bevelEnabled: true, bevelSize: 0.03, bevelThickness: 0.03, bevelSegments: 1 });
+  g.translate(0, 0, -0.15); return g;
+}
+function contorno(mesh, K) { // traço preto nas bordas das peças finas
+  const e = new THREE.LineSegments(new THREE.EdgesGeometry(mesh.geometry, 35), new THREE.LineBasicMaterial({ color: K }));
+  mesh.add(e);
 }
 
 function novaAve() {
-  const C = escuro ? 0x2a2a2a : 0xf7f5ef, K = escuro ? 0xf2f2f2 : 0x161616;
+  const C = escuro ? 0x2a2a2a : 0xfbfaf6, K = escuro ? 0xf2f2f2 : 0x161616;
   const ave = new THREE.Group(), corpo = new THREE.Group(); ave.add(corpo);
-  const b = parte(new THREE.SphereGeometry(1, 28, 20), C, K, 1.06); b.scale.set(1.3, 0.98, 0.92); corpo.add(b);
-  const h = parte(new THREE.SphereGeometry(0.66, 24, 18), C, K, 1.08); h.position.set(1.02, 0.62, 0); corpo.add(h);
-  const bico = parte(new THREE.ConeGeometry(0.15, 0.48, 14), K, K, 1.0); bico.rotation.z = -Math.PI / 2; bico.position.set(1.84, 0.56, 0); corpo.add(bico);
-  for (const z of [0.4, -0.4]) {
-    const o = new THREE.Mesh(new THREE.SphereGeometry(0.11, 12, 10), new THREE.MeshBasicMaterial({ color: K })); o.position.set(1.42, 0.78, z); corpo.add(o);
-    const br = new THREE.Mesh(new THREE.SphereGeometry(0.035, 8, 6), new THREE.MeshBasicMaterial({ color: C })); br.position.set(1.5, 0.83, z * 1.08); corpo.add(br);
+  // corpo em gota: peito cheio na frente, afinando para trás
+  const bg = new THREE.SphereGeometry(1, 32, 24); const P = bg.attributes.position;
+  for (let k = 0; k < P.count; k++) { const x = P.getX(k), f = x < 0 ? 1 + x * 0.32 : 1; P.setY(k, P.getY(k) * f); P.setZ(k, P.getZ(k) * f); }
+  bg.computeVertexNormals();
+  const b = parte(bg, C, K, 1.05); b.scale.set(1.35, 1.0, 0.9); corpo.add(b);
+  // cabeça grande, colada no corpo (sem pescoço), como no desenho
+  const h = parte(new THREE.SphereGeometry(0.74, 28, 20), C, K, 1.06); h.position.set(0.95, 0.5, 0); corpo.add(h);
+  const bico = new THREE.Mesh(new THREE.ConeGeometry(0.1, 0.5, 12), mat(K)); bico.rotation.z = -Math.PI / 2; bico.position.set(1.86, 0.52, 0); corpo.add(bico);
+  for (const z of [0.46, -0.46]) {
+    const o = new THREE.Mesh(new THREE.SphereGeometry(0.12, 14, 10), new THREE.MeshBasicMaterial({ color: K })); o.position.set(1.4, 0.68, z); corpo.add(o);
+    const br = new THREE.Mesh(new THREE.SphereGeometry(0.04, 8, 6), new THREE.MeshBasicMaterial({ color: escuro ? K : 0xffffff })); br.position.set(1.48, 0.73, z * 1.1); corpo.add(br);
   }
-  const cau = parte(caudaGeo(), C, K, 1.0); cau.position.set(-1.05, 0.08, 0); cau.rotation.z = 0.18; corpo.add(cau);
+  const cm = new THREE.Mesh(caudaGeo(), mat(C)); contorno(cm, K);
+  const cau = new THREE.Group(); cau.add(cm); cau.position.set(-1.05, 0.05, 0); cau.rotation.z = 0.28; corpo.add(cau);
   const lin = new THREE.LineBasicMaterial({ color: K });
-  for (const zz of [-0.012, 0.012]) {
-    const pts = []; [[-0.1, 0], [-1.3, -0.3], [-0.1, 0.03], [-1.38, 0], [-0.1, 0.07], [-1.32, 0.22]].forEach(([x, y]) => pts.push(new THREE.Vector3(x, y, zz)));
-    cau.add(new THREE.LineSegments(new THREE.BufferGeometry().setFromPoints(pts), lin));
-  }
   const asas = [];
   for (const lado of [1, -1]) {
-    const piv = new THREE.Group(); piv.position.set(0.15, 0.42, 0.62 * lado);
-    const a = parte(asaGeo(), C, K, 1.0); a.rotation.y = -Math.PI / 2 * lado; if (lado < 0) a.scale.z = -1;
-    // penas: linhas de nanquim na asa
-    const p = []; for (let i = 0; i < 4; i++) { p.push(new THREE.Vector3(0.25 + i * 0.32, 0.05 + i * 0.07, 0.06), new THREE.Vector3(0.55 + i * 0.38, 0.3 + i * 0.05, 0.06)); }
-    a.add(new THREE.LineSegments(new THREE.BufferGeometry().setFromPoints(p), lin));
+    const piv = new THREE.Group(); piv.position.set(0.25, 0.45, 0.6 * lado);
+    const am = new THREE.Mesh(asaGeo(), mat(C)); contorno(am, K);
+    // fileiras de penas desenhadas na asa
+    const p = []; for (let i = 0; i < 5; i++) { const x0 = 0.3 + i * 0.36; p.push(new THREE.Vector3(x0, 0.045, -0.2 + i * 0.03), new THREE.Vector3(x0 + 0.5, 0.045, 0.35 + i * 0.03)); }
+    am.add(new THREE.LineSegments(new THREE.BufferGeometry().setFromPoints(p), lin));
+    const a = new THREE.Group(); a.add(am); a.rotation.y = -Math.PI / 2 * lado; if (lado < 0) a.scale.z = -1;
     piv.add(a); corpo.add(piv); asas.push({ piv, lado });
   }
   const pernas = new THREE.Group();
-  for (const z of [0.22, -0.22]) { const l = new THREE.Mesh(new THREE.CylinderGeometry(0.035, 0.035, 0.5, 6), new THREE.MeshBasicMaterial({ color: K })); l.position.set(0.1, -1.0, z); pernas.add(l); }
+  for (const z of [0.25, -0.25]) { const l = new THREE.Mesh(new THREE.CylinderGeometry(0.035, 0.035, 0.6, 6), new THREE.MeshBasicMaterial({ color: K })); l.position.set(0.2, -1.05, z); pernas.add(l); }
   corpo.add(pernas);
   return { ave, corpo, asas, pernas };
 }
@@ -116,7 +125,7 @@ function loop(now) {
     const w = a.el.dataset ? a.el.dataset.w : '';
     if (a.modo == 'land' && f > 0.82) alvoPitch = 0.55; // freada: corpo para trás
     a.pitch += (alvoPitch - a.pitch) * 0.15;
-    a.v.ave.rotation.set(0.32, a.yaw, 0); a.v.corpo.rotation.set(a.roll, 0, a.pitch);
+    a.v.ave.rotation.set(0.45, a.yaw, 0); a.v.corpo.rotation.set(a.roll, 0, a.pitch);
     // asas: batem quando o app está batendo; abertas na planada; para cima na freada
     let ang;
     if (w == 'm') ang = 0.12 + Math.sin(now / 160) * 0.05;
