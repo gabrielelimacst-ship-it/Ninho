@@ -1,0 +1,7 @@
+<!doctype html><meta charset=utf-8><body style="margin:0;background:#f1efe8;height:100vh">
+<div id=b style="position:fixed;width:80px;height:70px"></div>
+<script type=module>
+import {voar} from './bird3d.js';
+const b=document.getElementById('b');window.go=(t)=>{const x=40+t*300,y=400-Math.sin(t*Math.PI)*300;b.style.left=x+'px';b.style.top=y+'px';b.dataset.w=t<.6?'u':t<.8?'m':'u'};
+go(0);voar(b,4000,'land');let t0=performance.now();(function f(){const t=Math.min(1,(performance.now()-t0)/4000);go(t);if(t<1)requestAnimationFrame(f)})();
+</script>
