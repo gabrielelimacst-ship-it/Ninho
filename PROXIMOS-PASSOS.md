@@ -33,11 +33,12 @@ Lista viva do que ficou combinado. Marque com `[x]` o que for concluído.
 
 ## 3. Melhorias para depois
 - [ ] Resumo do dia para stories: retirado em 13/11; se voltar, decidir o humor (A emoji grande, B pílula, C itálico)
-- [ ] Agenda: separar as tarefas do dia por período, de forma minimalista (MANHÃ ———, TARDE ———, NOITE ———)
+- [x] Agenda: tarefas separadas por período (MANHÃ ———)
 - [x] Lista de desejos com link (Perfil → Lista de desejos)
 - [ ] Conectar desejos às recompensas (um desejo vira recompensa com custo em tarefas)
 - [ ] Área de leitura, filmes e games (o que quero ver/ler/jogar e o que já terminei)
-- [ ] Ajustar o layout do e-mail de sugestão (chegou, mas o visual ficou ruim)
+- [x] Layout novo do e-mail de sugestão
+- [ ] Atualizar o código da função `aviso-sugestao` no Supabase para a versão 4
 - [ ] Sugestões chegarem no WhatsApp Business
       (caminhos: API oficial do WhatsApp Business, que exige conta Meta e modelo de mensagem
       aprovado; ou um serviço intermediário; decidir quando formos fazer)
@@ -47,9 +48,9 @@ Lista viva do que ficou combinado. Marque com `[x]` o que for concluído.
       (saúde, diário, humor) continua privado de cada pessoa. Exige mudar o banco:
       hoje cada conta tem um bloco só dela; as tarefas conjuntas precisariam de uma
       tabela própria com regra de acesso para os dois
-- [ ] Compromissos de hoje também na aba Tarefas
-- [ ] Transformar um compromisso em tarefa
-- [ ] Juntar automaticamente as duas versões quando houver conflito entre aparelhos
+- [x] Compromissos de hoje na aba Tarefas (opção em Perfil → Interface)
+- [ ] Transformar um compromisso em tarefa (tocar no compromisso e criar uma tarefa a partir dele)
+- [x] Juntar automaticamente as versões quando houver conflito entre aparelhos
 - [ ] (Opcional) Endereço próprio, tipo `meuninho.com.br` (~R$ 40/ano)
 
 ## Já feito ✓
