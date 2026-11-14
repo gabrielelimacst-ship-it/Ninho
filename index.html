@@ -324,7 +324,7 @@ return EV.list.filter(e=>e.ad?(e.s<=id&&(id<e.e||e.s==e.e)):(new Date(e.s)<=b&&n
 let W={},wT=0;const kW=()=>'ninho_w_'+UID,WURL=SB_URL+'/functions/v1/relogio';
 const hmin=m=>m?Math.floor(m/60)+'h'+pad(m%60):'',nPt=n=>(+n).toLocaleString('pt-BR');
 async function wGet(force){if(PV||!UID)return;if(!force&&Date.now()-wT<10*6e4)return;wT=Date.now();const id=UID;
-try{const{data,error}=await sb.from('relogio').select('dia,passos,sono_min,bpm_medio,bpm_repouso,atualizado_em').gte('dia',iso(new Date(Date.now()-120*864e5)));if(error||UID!=id)return;
+try{const{data,error}=await sb.from('relogio').select('*').gte('dia',iso(new Date(Date.now()-120*864e5)));if(error||UID!=id)return;
 const n={};(data||[]).forEach(r=>n[r.dia]=r);const mud=JSON.stringify(n)!=JSON.stringify(W);W=n;ls(kW(),W);if(mud&&!$('#md').classList.contains('s')&&(tab=='d'||tab=='s'))render(1)}catch(e){}}
 async function fetchR(){try{const{data,error}=await sb.from('ninhos').select('dados,atualizado_em').eq('user_id',UID).maybeSingle();return error?{err:error}:{data}}catch(e){return{err:e}}}
 async function sync(){if(PV||!UID||!navigator.onLine)return;if(dirty)return push();const id=UID,r=await fetchR();if(r.err||UID!=id||dirty)return;
@@ -478,8 +478,8 @@ const o={n,f:mf,fq:mfq,h:hs[0]||'',hs};if(mfq=='w')o.dw=mdw.slice();if(mfq=='x')
 function dM(j){D.meds.splice(j,1);save();$('#ml').innerHTML=medL()}
 /* Diário */
 const chip=(k,i,e,n,d)=>`<button class="chip ${d[k].includes(n)?'on':''}" onclick="ts('${k}',${i},this)">${e} ${esc(n)}</button>`;
-function wCard(J=TODAY()){const w=W[J]||{},ok=w.passos!=null||w.sono_min||w.bpm_repouso||w.bpm_medio;if(!D.cfg.wOn&&!ok)return'';
-const it=[w.sono_min?`<div class="wit"><span>😴</span><b>${hmin(w.sono_min)}</b><small>de sono</small></div>`:'',w.passos!=null?`<div class="wit"><span>👣</span><b>${nPt(w.passos)}</b><small>passos</small></div>`:'',w.bpm_repouso||w.bpm_medio?`<div class="wit"><span>❤️</span><b>${w.bpm_repouso||w.bpm_medio}</b><small>bpm ${w.bpm_repouso?'em repouso':'em média'}</small></div>`:''].join('');
+function wCard(J=TODAY()){const w=W[J]||{},ok=w.passos!=null||w.sono_min||w.bpm_repouso||w.bpm_medio||w.calorias;if(!D.cfg.wOn&&!ok)return'';
+const it=[w.sono_min?`<div class="wit"><span>😴</span><b>${hmin(w.sono_min)}</b><small>de sono</small></div>`:'',w.passos!=null?`<div class="wit"><span>👣</span><b>${nPt(w.passos)}</b><small>passos</small></div>`:'',w.bpm_repouso||w.bpm_medio?`<div class="wit"><span>❤️</span><b>${w.bpm_repouso||w.bpm_medio}</b><small>bpm ${w.bpm_repouso?'em repouso':'em média'}</small></div>`:'',w.calorias?`<div class="wit"><span>🔥</span><b>${nPt(w.calorias)}</b><small>kcal ativas</small></div>`:''].join('');
 return`<div class="lb">⌚ Do seu relógio</div>${ok?`<div class="wst">${it}</div><p class="sm" style="margin:10px 0 0">Atualizado às ${hm(w.atualizado_em)}</p>`:`<p class="sm" style="margin:0">${J==TODAY()?'Ainda sem dados de hoje. O atalho manda os números do dia no horário que você escolheu.':'Sem dados do relógio neste dia.'}</p>`}`}
 /* Diário: dj é o dia que está sendo visto ou corrigido ('' = hoje) */
 let dj='';const DJ=()=>lastN(7).includes(dj)?dj:TODAY();
@@ -631,7 +631,7 @@ const exames=[['data','exame','grupo','valor','unidade']];[...D.lab].sort((a,b)=
 const rem=[['remédio','forma','horário(s)','frequência']];D.meds.forEach(m=>rem.push([m.n,FM[m.f||'comp'][1],mHs(m).filter(Boolean).join(', '),mFq(m)]));
 const rec=[['recompensa','custo (tarefas)','vezes resgatada']];D.rw.forEach(r=>rec.push([r.t,r.c,r.n||0]));
 const fix=[['tarefa fixa','categoria','prioridade','repetição','desde']];D.fx.forEach(f=>fix.push([f.t,CT[f.c]?CT[f.c][1]:'',PR[f.p]?PR[f.p][0]:'',RT[f.r]||'',br(f.d)]));
-const rel=[['data','sono (h:min)','sono (min)','passos','batimento médio (bpm)','batimento em repouso (bpm)']];Object.keys(W).sort().forEach(k=>{const w=W[k];rel.push([br(k),hmin(w.sono_min),w.sono_min??'',w.passos??'',w.bpm_medio??'',w.bpm_repouso??''])});
+const rel=[['data','sono (h:min)','sono (min)','passos','batimento médio (bpm)','batimento em repouso (bpm)','calorias ativas (kcal)']];Object.keys(W).sort().forEach(k=>{const w=W[k];rel.push([br(k),hmin(w.sono_min),w.sono_min??'',w.passos??'',w.bpm_medio??'',w.bpm_repouso??'',w.calorias??''])});
 const des=[['desejo','prioridade','link','conquistado']];(D.ws||[]).forEach(w=>des.push([w.t,PR[wsP(w)][0],w.u||'',w.ok?'sim':'não']));
 const S=[['Dias',dias],['Tarefas',tarefas],['Tarefas fixas',fix],['Exames',exames],['Remédios',rem],['Recompensas',rec],...(des.length>1?[['Desejos',des]]:[]),...(rel.length>1?[['Relógio',rel]]:[])];
 if(D.cfg.hrt){const r=[['item','forma','horário','a cada (dias)','início do ciclo']];D.hr.forEach(h=>r.push([h.n,FM[h.f||'comp'][1],h.h||'',h.iv,br(h.d)]));S.splice(5,0,['Reposição hormonal',r])}

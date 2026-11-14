@@ -36,3 +36,6 @@ create policy "cada um apaga a sua chave" on public.relogio_chaves
 -- 3) A funcao "relogio" usa a chave de servidor (service_role)
 grant select on public.relogio_chaves to service_role;
 grant select, insert, update on public.relogio to service_role;
+
+-- 4) Calorias ativas
+alter table public.relogio add column if not exists calorias integer;
