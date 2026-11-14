@@ -31,7 +31,9 @@ Lista viva do que ficou combinado. Marque com `[x]` o que for concluído.
       com envio programado pelo Supabase; o relógio espelha as do iPhone
   - [x] Ícone, nome e tela cheia (manifesto) + aviso de novidade no app
   - [x] Código dos lembretes: Perfil → 🔔 Lembretes, central de avisos (sw.js), função `lembretes`, SQL
-  - [ ] Configurar no Supabase seguindo `docs/lembretes.md` (SQL 1, segredos, função, SQL 2)
+  - [x] Configurar no Supabase seguindo `docs/lembretes.md`
+  - [x] Lembrete de tarefas (por período, com opção de só prioridade alta)
+  - [ ] Testar no iPhone: "Mandar um teste" e um remédio daqui a 10 minutos
 
 ## 3. Melhorias para depois
 - [ ] Resumo do dia para stories: retirado em 13/11; se voltar, decidir o humor (A emoji grande, B pílula, C itálico)
