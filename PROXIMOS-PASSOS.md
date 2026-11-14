@@ -35,7 +35,7 @@ Lista viva do que ficou combinado. Marque com `[x]` o que for concluído.
 - [ ] Resumo do dia para stories: retirado em 13/11; se voltar, decidir o humor (A emoji grande, B pílula, C itálico)
 - [x] Agenda: tarefas separadas por período (MANHÃ ———)
 - [x] Lista de desejos com link (Perfil → Lista de desejos)
-- [ ] Conectar desejos às recompensas (um desejo vira recompensa com custo em tarefas)
+- [x] Conectar desejos às recompensas (escolher um desejo ao criar a recompensa, ou "Outro")
 - [ ] Área de leitura, filmes e games (o que quero ver/ler/jogar e o que já terminei)
 - [x] Layout novo do e-mail de sugestão
 - [ ] Atualizar o código da função `aviso-sugestao` no Supabase para a versão 4
