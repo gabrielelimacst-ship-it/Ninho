@@ -101,6 +101,7 @@ export function voar(el, dur, modo) {
   if (!iniciar()) return false;
   if (!cv.isConnected) document.body.appendChild(cv);
   tamanho();
+  for (const o of aves) if (o.el == el) { scene.remove(o.v.ave); aves.delete(o); }
   const v = novaAve(); scene.add(v.ave); v.pernas.visible = false;
   const a = { v, el, t0: performance.now(), dur, modo, px: null, py: null, yaw: 0, roll: 0, pitch: 0, fl: 0 };
   aves.add(a); if (!raf) raf = requestAnimationFrame(loop);
@@ -111,27 +112,37 @@ function loop(now) {
   raf = 0;
   for (const a of aves) {
     const f = (now - a.t0) / a.dur, r = a.el.isConnected ? a.el.getBoundingClientRect() : null;
-    if (!r || f >= 1.02) { scene.remove(a.v.ave); aves.delete(a); a.el.classList && a.el.classList.remove('ghost'); continue; }
+    const pousado = a.modo == 'land' && f >= 1;
+    if (!r || (f >= 1.02 && !pousado)) { scene.remove(a.v.ave); aves.delete(a); a.el.classList && a.el.classList.remove('ghost'); continue; }
+    a.v.ave.visible = r.width > 0;
     const x = r.left + r.width / 2, y = r.top + r.height * 0.55;
     const dx = a.px == null ? 0 : x - a.px, dy = a.py == null ? 0 : y - a.py; a.px = x; a.py = y;
     const s = Math.max(10, r.width * 0.34);
     a.v.ave.position.set(x - innerWidth / 2, innerHeight / 2 - y, 0);
     a.v.ave.scale.setScalar(s);
+    if (pousado) { // pousinho: o corpo amassa e volta, como borracha
+      const tp = (f - 1) * a.dur, k = Math.exp(-tp / 160) * Math.sin(tp / 55);
+      a.v.ave.scale.set(s * (1 + 0.14 * k), s * (1 - 0.2 * k), s);
+    }
     // direção: vira para onde está indo; inclina nas curvas; nariz sobe/desce com a subida
-    const alvoYaw = Math.abs(dx) > 0.3 ? (dx > 0 ? -0.35 : Math.PI + 0.35) : a.yaw;
+    const alvoYaw = pousado ? (a.el.classList.contains('lf') ? Math.PI + 0.35 : -0.35) : Math.abs(dx) > 0.3 ? (dx > 0 ? -0.35 : Math.PI + 0.35) : a.yaw;
     a.yaw += (alvoYaw - a.yaw) * 0.12;
     a.roll += ((-dy * 0.06 + (dx > 0 ? -0.25 : 0.25)) - a.roll) * 0.1;
     let alvoPitch = Math.max(-0.5, Math.min(0.5, -dy * 0.05));
     const w = a.el.dataset ? a.el.dataset.w : '';
     if (a.modo == 'land' && f > 0.82) alvoPitch = 0.55; // freada: corpo para trás
     a.pitch += (alvoPitch - a.pitch) * 0.15;
-    a.v.ave.rotation.set(0.6, a.yaw, 0); a.v.corpo.rotation.set(a.roll, 0, a.pitch);
+    if (pousado) { a.roll *= 0.85; a.pitch += (0.3 - a.pitch) * 0.15; a.tilt = (a.tilt ?? 0.6) + (0.2 - (a.tilt ?? 0.6)) * 0.12; }
+    a.v.ave.rotation.set(a.tilt ?? 0.6, a.yaw, 0); a.v.corpo.rotation.set(a.roll, 0, a.pitch);
     // asas: batem quando o app está batendo; abertas na planada; para cima na freada
     let ang;
     if (w == 'm') ang = 0.12 + Math.sin(now / 160) * 0.05;
     else if (w == 'u' && a.modo == 'land' && f > 0.82) ang = 1.15;
     else { a.fl += 0.62; ang = Math.sin(a.fl) * 0.95 + 0.2; }
-    for (const s2 of a.v.asas) s2.piv.rotation.x = -ang * s2.lado;
+    if (pousado) { // pousado: asas recolhem devagar ao lado do corpo, como no desenho
+      a.dob = Math.min(1, (a.dob || 0) + 0.08);
+      for (const s2 of a.v.asas) { s2.piv.rotation.set((1.25 * a.dob - ang * (1 - a.dob)) * s2.lado, 0.45 * a.dob * s2.lado, 0); }
+    } else for (const s2 of a.v.asas) s2.piv.rotation.set(-ang * s2.lado, 0, 0);
     a.v.pernas.visible = a.modo == 'land' && f > 0.8;
   }
   R.render(scene, cam);
