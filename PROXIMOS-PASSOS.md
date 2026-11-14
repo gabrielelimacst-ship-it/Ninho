@@ -29,7 +29,8 @@ Lista viva do que ficou combinado. Marque com `[x]` o que for concluído.
 - [ ] **B. Lembretes do Ninho no relógio**: notificações do app instalado na Tela de Início
       (remédios — já respeitando frequência e horários —, reposição e água),
       com envio programado pelo Supabase; o relógio espelha as do iPhone
-  - [ ] Junto: ícone e nome próprios na Tela de Início
+  - [x] Ícone, nome e tela cheia (manifesto) + aviso de novidade no app
+  - [ ] Notificações: botão "Ativar lembretes", service worker, chaves VAPID, tabela de inscrições e envio programado no Supabase
 
 ## 3. Melhorias para depois
 - [ ] Resumo do dia para stories: retirado em 13/11; se voltar, decidir o humor (A emoji grande, B pílula, C itálico)
