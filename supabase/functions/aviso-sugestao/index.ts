@@ -1,4 +1,4 @@
-// Ninho - aviso de sugestao (Supabase Edge Function "aviso-sugestao") - versao 3
+// Ninho - aviso de sugestao (Supabase Edge Function "aviso-sugestao") - versao 4
 // O app chama esta funcao logo depois de salvar uma sugestao.
 // Ela confere o login de quem enviou e manda um e-mail para a dona do app pelo Gmail (porta 465).
 // Segredos necessarios (Edge Functions > Secrets): GMAIL_USER e GMAIL_SENHA_APP.
@@ -6,7 +6,7 @@
 // Arquivo so com caracteres simples (sem crases nem acentos) para colar sem erro.
 import nodemailer from "npm:nodemailer@6.9.16";
 
-const VERSAO = 3;
+const VERSAO = 4;
 const CORS = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
@@ -42,13 +42,20 @@ export function montar(s: Record<string, unknown>) {
   const ic = tipo === "Problema" ? "\u{1F41E}" : tipo === "Elogio" ? "\u{1F49B}" : "\u{1F4A1}";
   const assunto = ic + " Nova sugest\u00e3o no Ninho: " + tipo;
   const texto = tipo + " de " + (s.email || "algu\u00e9m") + " (" + quando + ", vers\u00e3o " + (s.versao || "?") + "):\n\n" + String(s.texto || "");
+  const cor = tipo === "Problema" ? "#f6d6d6" : tipo === "Elogio" ? "#f3e3b5" : "#d9e4f5";
   const html =
-    '<div style="font-family:Helvetica,Arial,sans-serif;max-width:480px;color:#222">' +
-    '<p style="font-family:Georgia,serif;font-size:22px;font-weight:700;margin:0 0 16px">Ninho.</p>' +
-    '<p style="font-size:15px;margin:0 0 6px"><b>' + ic + " " + esc(tipo) + "</b> de " + esc(s.email || "algu\u00e9m") + "</p>" +
-    '<p style="font-size:13px;color:#888;margin:0 0 16px">' + esc(quando) + " \u00b7 vers\u00e3o " + esc(s.versao || "?") + "</p>" +
-    '<div style="background:#f3f1ea;border-radius:16px;padding:16px;font-size:15px;line-height:1.5;white-space:pre-wrap">' + esc(s.texto) + "</div>" +
-    '<p style="font-size:12px;color:#999;margin:16px 0 0">Todas as sugest\u00f5es: Supabase \u203a Table Editor \u203a sugestoes</p></div>';
+    '<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#e6e2d3;padding:32px 12px;font-family:Helvetica,Arial,sans-serif">' +
+    '<tr><td align="center"><table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:460px;background:#ffffff;border-radius:28px;padding:32px 28px;color:#222222">' +
+    '<tr><td>' +
+    '<p style="font-family:Georgia,serif;font-size:26px;font-weight:700;margin:0 0 4px;color:#111111">Ninho.</p>' +
+    '<p style="font-size:13px;color:#888888;margin:0 0 24px">Nova sugest\u00e3o recebida</p>' +
+    '<span style="display:inline-block;background:' + cor + ';border-radius:99px;padding:6px 14px;font-size:13px;font-weight:700;color:#111111">' + ic + " " + esc(tipo) + "</span>" +
+    '<p style="font-size:17px;line-height:1.55;margin:18px 0 22px;color:#222222;white-space:pre-wrap">' + esc(s.texto) + "</p>" +
+    '<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border-top:1px solid #eeeeee"><tr><td style="padding-top:14px;font-size:13px;line-height:1.6;color:#888888">' +
+    "De <b style=\"color:#444444\">" + esc(s.email || "algu\u00e9m") + "</b><br>" + esc(quando) + " \u00b7 vers\u00e3o " + esc(s.versao || "?") +
+    "</td></tr></table>" +
+    '<p style="font-size:12px;color:#aaaaaa;margin:20px 0 0">Responda este e-mail para falar direto com quem enviou.</p>' +
+    "</td></tr></table></td></tr></table>";
   return { assunto, texto, html };
 }
 
