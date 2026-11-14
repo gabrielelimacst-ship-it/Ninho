@@ -36,6 +36,8 @@ Lista viva do que ficou combinado. Marque com `[x]` o que for concluído.
   - [ ] Testar no iPhone: "Mandar um teste" e um remédio daqui a 10 minutos
 
 ## 3. Melhorias para depois
+- [x] Ciclo menstrual (fluxo, sintomas, previsão, humor por fase, aviso), opcional em Interface
+- [x] "Há quantos dias" para outra usuária (banho, fluoxetina, caminhar 20 min)
 - [ ] Resumo do dia para stories: retirado em 13/11; se voltar, decidir o humor (A emoji grande, B pílula, C itálico)
 - [x] Agenda: tarefas separadas por período (MANHÃ ———)
 - [x] Lista de desejos com link (Perfil → Lista de desejos)
