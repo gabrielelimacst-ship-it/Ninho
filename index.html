@@ -241,7 +241,7 @@ nav svg{stroke-width:1.7}
 .evh{font-size:11.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;opacity:.6;margin:16px 4px 2px}
 .evr{gap:12px!important;justify-content:flex-start!important}.evt{font-size:13px;font-variant-numeric:tabular-nums;opacity:.75;min-width:58px}.evc{font-size:11px;opacity:.5}
 #sh .st{font-size:15px}#sh .st>.sm{font-size:12.5px}
-</style></head><body>
+.bd.ghost .fl{visibility:hidden}</style></head><body>
 <div id="bg"></div><div id="app"></div><nav id="nav"></nav><div id="md" onclick="if(event.target==this)mdBack()"><div id="sh"></div></div><div id="toast"></div>
 <script src="supabase.js"></script>
 <script>
@@ -394,7 +394,7 @@ async function out(){if(PV)return toast('Na prévia não há conta. Use o site p
 [kD(),kX(),kA(),kE(),kW()].forEach(k=>localStorage.removeItem(k));W={};UID=null;EM='';EV=null;dirty=0;closeM();mode='in';await sb.auth.signOut().catch(()=>{});auth()}
 const TON=['','🏻','🏼','🏽','🏾','🏿'],GEN=['','\u200D\u2640\uFE0F','\u200D\u2642\uFE0F'],skin=h=>{const c=(D&&D.cfg)||{},t=TON[c.sk||0],g=GEN[c.sg||0];return t||g?h.replace(/(\u{1F646}|\u{1F3C3})(?![\u{1F3FB}-\u{1F3FF}\u200C\u200D])/gu,'$1'+t+g):h};
 const avS=()=>D.cfg.av>=0?'background:#e6e2d3;overflow:hidden':D.cfg.photo?`background-image:url(${D.cfg.photo})`:'',avT=()=>D.cfg.av>=0?avSvg(D.cfg.av):D.cfg.photo?'':esc((D.cfg.nick||U)[0].toUpperCase());
-const FR=['Um passo de cada vez.','Termine uma coisinha e o resto fica mais leve.','Ficou algo para trás? Tudo bem.','Seu ritmo também é ritmo.','Respira. Você está indo bem.','Feito é melhor que perfeito.','Hoje pode ser mais leve.','Você não precisa dar conta de tudo hoje.','Cuidar de você também é tarefa.','Pausa também é progresso.','Um copo d’água já conta.','Devagar também chega.'],VER='0.23';
+const FR=['Um passo de cada vez.','Termine uma coisinha e o resto fica mais leve.','Ficou algo para trás? Tudo bem.','Seu ritmo também é ritmo.','Respira. Você está indo bem.','Feito é melhor que perfeito.','Hoje pode ser mais leve.','Você não precisa dar conta de tudo hoje.','Cuidar de você também é tarefa.','Pausa também é progresso.','Um copo d’água já conta.','Devagar também chega.'],VER='0.24';
 const hdr=t=>{const n=new Date();return`<div class="hd"><div><div class="gr">${n.toLocaleDateString('pt-BR',{weekday:'long',day:'numeric',month:'long'})}</div><h1>${t}</h1><div class="frs">${FR[(Math.floor(Date.now()/864e5)+'thcds'.indexOf(tab))%FR.length]}</div></div><button class="av" style="${avS()}" onclick="prof()" aria-label="Perfil">${avT()}</button></div>`};
 const V={t:['Tarefas',tasksV],h:['Saúde',healthV],c:['Agenda',calV],d:['Meu Diário',diaryV],s:['Estatísticas',statsV]};
 function nvH(){const n=$('#nav');if(!n||!n.firstChild)return;document.documentElement.style.setProperty('--navH',n.offsetHeight+'px')}
@@ -729,6 +729,7 @@ function wsRm(id){D.ws=(D.ws||[]).filter(x=>x.id!=id);save();$('#wsl').innerHTML
 const NOV='2026-11-icone',ehApp=()=>matchMedia('(display-mode: standalone)').matches||navigator.standalone===true,ehIOS=()=>/iPhone|iPad|iPod/.test(navigator.userAgent);
 /* O que há de novo: o mais recente primeiro; aparece o que a pessoa ainda não viu */
 const NOVS=[
+ {v:'0.24',i:['🐦 O passarinho agora é <b>3D de verdade</b>, como num desenho animado: vira para onde está indo, inclina nas curvas, bate as asas e solta as perninhas para pousar.']},
  {v:'0.22',i:['🐦 Um <b>passarinho novo</b>, desenhado a lápis, e um <b>voo mais natural</b>: bate as asas, plana, freia antes de pousar e vem em sua direção. Dá para desligar a profundidade em <b>Perfil → Interface</b>.']},
  {v:'0.21',i:['🩸 <b>Acompanhamento do ciclo menstrual</b>: fluxo, sintomas, previsão da próxima menstruação e humor por fase. Ligue em <b>Perfil → Interface</b>.']},
  {v:'0.20',i:['🔔 <b>Lembretes no celular</b>: remédios e água (Perfil → Lembretes)','📝 <b>Lembrete das tarefas</b> no começo de cada período, com opção de só as de prioridade alta','✨ <b>Lista de desejos</b> com link e prioridade, que vira recompensa','🗓️ Agenda com as tarefas separadas por <b>manhã, tarde e noite</b>','📅 <b>Compromissos de hoje</b> também na aba Tarefas']}
@@ -820,6 +821,8 @@ const r=b.getBoundingClientRect(),fromL=Math.random()<.5,sx=fromL?-(r.left+60):i
 b.animate(voo(sx,sy,0,0,{land:1,arc:70}),{duration:1300,easing:'linear'}).onfinish=()=>{b.classList.remove('fly');b.querySelector('.sq').animate([{transform:'scale(1.15,.78)'},{transform:'scale(.94,1.08)'},{transform:'scale(1)'}],{duration:450,easing:'ease-out'});pi();if(Math.random()<.35)setTimeout(()=>b.classList.toggle('lf'),700)}}
 function birdOut(k){const b=qB(k);if(!b)return;b.classList.add('go');const done=()=>{b.remove();glSync()};if(RM()){done();return}const rt=Math.random()<.5;b.classList.toggle('lf',!rt);b.classList.add('fly');b3(b,1100,'out');b.animate(voo(0,0,rt?innerWidth:-innerWidth,-innerHeight*.5,{out:1,arc:30}),{duration:1100,easing:'linear'}).onfinish=done}
 /* Voo realista: caminho em curva com sobe-e-desce a cada batida, planada e freada; asas em quadros */
+/* passarinho 3D (three.js), carregado só quando precisa */
+let V3P;const V3=()=>V3P||(V3P=import('./bird3d.js').catch(e=>{V3P=null;throw e}));
 const voo=(sx,sy,ex,ey,o={})=>{const N=48,K=[],cx=(sx+ex)/2,cy=Math.min(sy,ey)-(o.arc==null?60:o.arc),dir=ex>=sx?1:-1,d3=!D||!D.cfg||D.cfg.v3!==0;
 for(let i=0;i<=N;i++){const tau=i/N,t=o.land?1-Math.pow(1-tau,2.1):o.out?Math.pow(tau,1.6):tau<.5?2*tau*tau:1-Math.pow(-2*tau+2,2)/2,u=1-t;
 const bat=(o.land?tau<.66:o.out?true:(tau<.35||tau>.62))?Math.sin(tau*Math.PI*(o.land?11:13))*3.2*(1-tau*.6):0;
@@ -827,7 +830,7 @@ const x=u*u*sx+2*u*t*cx+t*t*ex,y=u*u*sy+2*u*t*cy+t*t*ey+bat,dx=2*u*(cx-sx)+2*t*(
 let a=Math.max(-28,Math.min(28,Math.atan2(dy,Math.abs(dx)+1)*57.3*.45));if(o.land&&tau>.8)a=a*(1-(tau-.8)/.2)-16*(tau-.8)/.2;if(o.land&&tau==1)a=0;a*=dir;
 const z=d3?(o.land?.72+.28*tau+Math.sin(tau*Math.PI)*.38:o.out?1+Math.sin(tau*Math.PI*.6)*.35-tau*.25:.7+Math.sin(tau*Math.PI)*.55):1;
 K.push({transform:BT+`translate(${x.toFixed(1)}px,${y.toFixed(1)}px) rotate(${a.toFixed(1)}deg) scale(${z.toFixed(3)})`,offset:tau})}return K};
-const b3=(b,dur,k)=>{const fr=['u','m','d','m'],T0=performance.now();let i=0;const tick=()=>{if(!b.isConnected)return;const f=(performance.now()-T0)/dur;
+const b3=(b,dur,k)=>{const fr=['u','m','d','m'],T0=performance.now();let i=0;if(D&&D.cfg&&D.cfg.v3!==0&&!RM())V3().then(m=>{const r=dur-(performance.now()-T0);if(r>150&&b.isConnected&&m.voar(b,r,k))b.classList.add('ghost')}).catch(()=>{});const tick=()=>{if(!b.isConnected)return;const f=(performance.now()-T0)/dur;
 if(f>=1){delete b.dataset.w;return}let w;if(k=='land')w=f<.66?fr[i++%4]:f<.82?'m':'u';else if(k=='by')w=(f<.35||f>.62)?fr[i++%4]:'m';else w=fr[i++%4];b.dataset.w=w;setTimeout(tick,k=='by'&&f>.35&&f<.62?90:62)};tick()};
 function flyBy(){pi();if(RM())return;const b=mkB('x');b.classList.add('fb','fly');document.body.appendChild(b);b3(b,2000,'by');const y=innerHeight*(.25+Math.random()*.3);b.animate(voo(-40,y,innerWidth+40,y-20,{arc:80}),{duration:2000,easing:'linear'}).onfinish=()=>b.remove()}
 function visit(){const bx=$('#brd');if(tab!='t'||!bx||birdsNow().length||bx.querySelector('.vis'))return;const b=mkB('v');b.classList.add('vis','go');bx.appendChild(b);const t=.2+Math.random()*.5,[x,y]=bz(t);b.style.left=x/GW*100+'%';b.style.top=(y-thk(t)/2+1)/GH*100+'%';
