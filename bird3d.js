@@ -115,9 +115,8 @@ function loop(now) {
     const pousado = a.modo == 'land' && f >= 1;
     if (!r || (f >= 1.02 && !pousado)) { scene.remove(a.v.ave); aves.delete(a); a.el.classList && a.el.classList.remove('ghost'); continue; }
     a.v.ave.visible = r.width > 0;
-    const x = r.left + r.width / 2, y = r.top + r.height * 0.55;
+    const s = Math.max(8, r.width * 0.26), x = r.left + r.width / 2, y = r.bottom - 1.25 * s; // os pés tocam a base do passarinho do app
     const dx = a.px == null ? 0 : x - a.px, dy = a.py == null ? 0 : y - a.py; a.px = x; a.py = y;
-    const s = Math.max(10, r.width * 0.34);
     a.v.ave.position.set(x - innerWidth / 2, innerHeight / 2 - y, 0);
     a.v.ave.scale.setScalar(s);
     if (pousado) { // pousinho: o corpo amassa e volta, como borracha
