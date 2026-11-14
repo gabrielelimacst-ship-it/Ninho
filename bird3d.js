@@ -114,7 +114,7 @@ function loop(now) {
     if (!r || f >= 1.02) { scene.remove(a.v.ave); aves.delete(a); a.el.classList && a.el.classList.remove('ghost'); continue; }
     const x = r.left + r.width / 2, y = r.top + r.height * 0.55;
     const dx = a.px == null ? 0 : x - a.px, dy = a.py == null ? 0 : y - a.py; a.px = x; a.py = y;
-    const s = Math.max(10, r.width * 0.42);
+    const s = Math.max(10, r.width * 0.34);
     a.v.ave.position.set(x - innerWidth / 2, innerHeight / 2 - y, 0);
     a.v.ave.scale.setScalar(s);
     // direção: vira para onde está indo; inclina nas curvas; nariz sobe/desce com a subida
@@ -125,7 +125,7 @@ function loop(now) {
     const w = a.el.dataset ? a.el.dataset.w : '';
     if (a.modo == 'land' && f > 0.82) alvoPitch = 0.55; // freada: corpo para trás
     a.pitch += (alvoPitch - a.pitch) * 0.15;
-    a.v.ave.rotation.set(0.45, a.yaw, 0); a.v.corpo.rotation.set(a.roll, 0, a.pitch);
+    a.v.ave.rotation.set(0.6, a.yaw, 0); a.v.corpo.rotation.set(a.roll, 0, a.pitch);
     // asas: batem quando o app está batendo; abertas na planada; para cima na freada
     let ang;
     if (w == 'm') ang = 0.12 + Math.sin(now / 160) * 0.05;
