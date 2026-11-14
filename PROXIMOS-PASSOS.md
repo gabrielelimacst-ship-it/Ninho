@@ -20,12 +20,14 @@ Lista viva do que ficou combinado. Marque com `[x]` o que for concluído.
 - [x] Código pronto: função `relogio`, tabelas, chave pessoal, cartão no Diário,
       insights nas Estatísticas e aba na planilha
 - [ ] **A. Dados do relógio** — seguir `docs/relogio-atalho.md`:
-  - [ ] Parte 1: Mi Fitness → app Saúde
-  - [ ] Parte 2: rodar `supabase/sql/relogio.sql` e instalar a função `relogio`
+  - [x] Parte 1: Mi Fitness → app Saúde
+  - [x] Parte 2: rodar `supabase/sql/relogio.sql` e instalar a função `relogio`
         (nome sem acento, conferir a 1ª linha do código, Verify JWT desligado)
-  - [ ] Parte 3: gerar a chave no Ninho (Perfil → Conexões e dados → Relógio)
-  - [ ] Parte 4: montar o atalho no app Atalhos
+  - [x] Parte 3: gerar a chave no Ninho (Perfil → Conexões e dados → Relógio)
+  - [x] Parte 4: montar o atalho no app Atalhos
   - [ ] Parte 5: automação diária às 21h30
+  - Obs.: o Mi Fitness não grava batimento em repouso (o atalho ficou sem esse campo);
+    foi preciso liberar as tabelas para a service_role (`supabase/sql/relogio-permissoes.sql`)
 - [ ] **B. Lembretes do Ninho no relógio**: notificações do app instalado na Tela de Início
       (remédios — já respeitando frequência e horários —, reposição e água),
       com envio programado pelo Supabase; o relógio espelha as do iPhone
