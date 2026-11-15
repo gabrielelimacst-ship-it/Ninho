@@ -608,7 +608,7 @@ const hrs=D.cfg.hrt?D.hr.map(h=>{let a=0,b=0;ds.forEach(id=>{const k=dd(h.d,id);
 const fgs=rg.flatMap(id=>rd(id).fgs||[]),wv=ds.map(id=>W[id]).filter(Boolean),sono=wv.filter(w=>w.sono_min).map(w=>w.sono_min),ps=wv.filter(w=>w.passos!=null).map(w=>w.passos),av=a=>a.reduce((x,y)=>x+y,0)/a.length;
 const c=mnOn()?ciclo():null,lab=D.lab.filter(x=>x.d>=ds[0]).sort((a,b)=>a.d<b.d?1:-1);
 const pads=(()=>{try{const w=document.createElement('div');w.innerHTML=statsV();const l=[...w.querySelectorAll('.lb')].find(x=>x.textContent.includes('revelam'));return l?[...l.parentElement.querySelectorAll('.ix')].map(p=>p.innerHTML):[]}catch(e){return[]}})();
-const h=`<div class="rcab"><div><b style="font-size:22px">Relatório de saúde</b><div class="sm">${esc(D.cfg.nick||U)} · ${br(ds[0])} a ${br(ds[n-1])} · ${rg.length} dia(s) com registro</div></div><div class="noprint"><button class="sgb" onclick="relPdf(this)">Salvar PDF</button> <button class="gb" onclick="$('#rel').remove()">Fechar</button></div></div>
+const h=`<div class="rcab"><div><b style="font-size:22px">Relatório de saúde</b><div class="sm">${esc(D.cfg.nick||U)} · ${br(ds[0])} a ${br(ds[n-1])} · ${rg.length} dia(s) com registro</div></div><div class="noprint"><button class="sgb" onclick="relPdf(this)">Salvar PDF</button> <button class="gb" onclick="relMail(this)">✉️ Enviar para o e-mail</button> <button class="gb" onclick="$('#rel').remove()">Fechar</button></div></div>
 ${sec('Humor',md.length?`<p>Média <b>${av(md).toFixed(1)}</b> de 5 em ${md.length} dia(s). ${[1,2,3,4,5].map(i=>MO[i-1]+' '+['Muito mal','Mal','Neutro','Bem','Muito bem'][i-1]+': '+md.filter(x=>x==i).length).join(' · ')}</p>`:'')}
 ${sec('Sintomas no corpo',tb(cnt(d=>d.bs||[]).map(([k,v])=>[k,v+' dia(s)',pc(v,rg.length)]),['Sintoma','Dias','% dos dias registrados']))}
 ${sec('Fogachos',fgs.length?`<p><b>${fgs.length}</b> registrado(s): ${[1,2,3].map(i=>fgs.filter(x=>x.i==i).length+' '+FGI[i]).join(', ')}. ${(()=>{const hs=fgs.filter(x=>x.h&&x.h!='—').map(x=>+x.h.slice(0,2));if(!hs.length)return'';const p=[['madrugada',0,6],['manhã',6,12],['tarde',12,18],['noite',18,24]].map(([n,a,b])=>[n,hs.filter(x=>x>=a&&x<b).length]).sort((a,b)=>b[1]-a[1])[0];return'Mais comuns de '+p[0]+'.'})()}</p>`:'')}
@@ -626,8 +626,18 @@ let INSK=[];function insFb(j,v){const k=INSK[j];if(!k||!k[0])return;D.insF=D.ins
 /* PDF de verdade (o iPhone não imprime de dentro do app instalado): monta o arquivo e abre o compartilhar */
 function jsPdfLib(){return window.jspdf?Promise.resolve():new Promise((ok,no)=>{const x=document.createElement('script');x.src='jspdf.umd.min.js';x.onload=ok;x.onerror=no;document.head.appendChild(x)})}
 const pdfTx=t=>(t||'').replace(/\s+/g,' ').replace(/[^\u0000-ÿ“”‘’–—…•]/g,'').replace(/ ([,.])/g,'$1').replace(/^[ ·]+/,'').trim();
-async function relPdf(btn){if(btn){btn.disabled=true;btn.textContent='Gerando PDF…'}
-try{await jsPdfLib();const r=$('#rel');const doc=new jspdf.jsPDF({unit:'pt',format:'a4'}),M=48,PW=doc.internal.pageSize.getWidth(),PH=doc.internal.pageSize.getHeight(),W=PW-2*M;let y=M;
+async function relPdf(btn){const t0=btn&&btn.textContent;if(btn){btn.disabled=true;btn.textContent='Gerando PDF…'}
+try{const{bl,nome}=await relPdfBlob(),f=new File([bl],nome,{type:'application/pdf'});
+if(navigator.canShare&&navigator.canShare({files:[f]})){try{await navigator.share({files:[f],title:'Relatório de saúde'})}catch(e){}}
+else{const a=document.createElement('a');a.href=URL.createObjectURL(bl);a.download=nome;document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},4000)}
+}catch(e){toast('Não consegui gerar o PDF agora. Tente de novo com internet.')}finally{if(btn){btn.disabled=false;btn.textContent=t0}}}
+/* Envia o PDF para o e-mail da própria conta */
+async function relMail(btn){if(PV)return toast('No modo prévia não dá para enviar e-mail');if(!navigator.onLine)return toast('Sem internet agora');const t0=btn.textContent;btn.disabled=true;btn.textContent='Enviando…';
+try{const{bl,nome}=await relPdfBlob(),b64=await new Promise((ok,no)=>{const fr=new FileReader();fr.onload=()=>ok(String(fr.result).split(',')[1]);fr.onerror=no;fr.readAsDataURL(bl)});
+const{data,error}=await sb.functions.invoke('relatorio-email',{body:{pdf:b64,nome}});if(error||!data||!data.ok)throw error||new Error(data&&data.msg);snd('ok');toast('Enviado para '+(EM||'o seu e-mail')+' ✦')}
+catch(e){toast('Não consegui enviar agora. Tente de novo em instantes.')}finally{btn.disabled=false;btn.textContent=t0}}
+async function relPdfBlob(){
+await jsPdfLib();const r=$('#rel');const doc=new jspdf.jsPDF({unit:'pt',format:'a4'}),M=48,PW=doc.internal.pageSize.getWidth(),PH=doc.internal.pageSize.getHeight(),W=PW-2*M;let y=M;
 const pg=h=>{if(y+h>PH-M){doc.addPage();y=M}},txt=(t,sz=10.5,b=0,c=30,gap=4)=>{t=pdfTx(t);if(!t)return;doc.setFont('helvetica',b?'bold':'normal');doc.setFontSize(sz);doc.setTextColor(c);const L=doc.splitTextToSize(t,W);L.forEach(l=>{pg(sz*1.35);doc.text(l,M,y+sz);y+=sz*1.35});y+=gap};
 txt(r.querySelector('.rcab b').textContent,18,1,20,2);txt(r.querySelector('.rcab .sm').textContent,9.5,0,110,10);
 [...r.children].forEach(el=>{if(el.classList.contains('rcab'))return;const tg=el.tagName;
@@ -636,10 +646,7 @@ else if(tg=='P')txt(el.textContent,el.classList.contains('sm')?8.5:10.5,0,el.cla
 else if(tg=='UL')[...el.children].forEach(li=>txt('• '+li.textContent,10,0,30,3));
 else if(tg=='TABLE'){const rows=[...el.rows].map(tr=>[...tr.cells].map(td=>pdfTx(td.textContent))),n=rows[0].length,cw=W/n;
 rows.forEach((row,ri)=>{const hd=ri==0&&el.rows[0].cells[0].tagName=='TH',sz=hd?8:9.5;doc.setFont('helvetica',hd?'bold':'normal');doc.setFontSize(sz);const cl=row.map(c=>doc.splitTextToSize(hd?c.toUpperCase():c,cw-8)),h=Math.max(...cl.map(c=>c.length))*sz*1.3+8;pg(h);doc.setTextColor(hd?120:30);cl.forEach((c,i)=>c.forEach((l,k)=>doc.text(l,M+i*cw+2,y+sz+3+k*sz*1.3)));y+=h;doc.setDrawColor(232);doc.line(M,y,M+W,y)});y+=8}});
-const nome='relatorio-ninho-'+TODAY()+'.pdf',bl=doc.output('blob'),f=new File([bl],nome,{type:'application/pdf'});
-if(navigator.canShare&&navigator.canShare({files:[f]})){try{await navigator.share({files:[f],title:'Relatório de saúde'})}catch(e){}}
-else{const a=document.createElement('a');a.href=URL.createObjectURL(bl);a.download=nome;document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},4000)}
-}catch(e){toast('Não consegui gerar o PDF agora. Tente de novo com internet.')}finally{if(btn){btn.disabled=false;btn.textContent='Salvar PDF'}}}
+return{bl:doc.output('blob'),nome:'relatorio-ninho-'+TODAY()+'.pdf'}}
 /* Estatísticas */
 const lastN=n=>[...Array(n)].map((_,i)=>{const d=new Date();d.setDate(d.getDate()-(n-1-i));return iso(d)}),tdy=id=>D.tasks.filter(t=>t.d==id||t.dt==id);
 function hv(h,id){const d=rd(id),Q=doses(id),M=Q.length,ts=tdy(id),f={a:Math.min(5,d.w/D.cfg.goal*5),r:d.ml.filter(x=>x).length/3*5,m:M?Q.filter(x=>d.md[x.k]).length/M*5:null,t:ts.length?ts.filter(t=>t.x).length/ts.length*5:null,e:d.ex.length?5:0};
@@ -882,7 +889,7 @@ function wsRm(id){D.ws=(D.ws||[]).filter(x=>x.id!=id);save();$('#wsl').innerHTML
 const NOV='2026-11-icone',ehApp=()=>matchMedia('(display-mode: standalone)').matches||navigator.standalone===true,ehIOS=()=>/iPhone|iPad|iPod/.test(navigator.userAgent);
 /* O que há de novo: o mais recente primeiro; aparece o que a pessoa ainda não viu */
 const NOVS=[
- {v:'0.29',i:['🎁 Cada recompensa agora <b>junta as suas próprias tarefas</b>: resgatar uma não tira o progresso das outras.','⏳ Duas recompensas com a <b>mesma meta no mesmo dia</b>? A segunda entra na fila e começa a contar quando você resgatar a primeira.','🎯 <b>Uma coisa só</b> agora abre direto a escolha da tarefa e, em seguida, o cronômetro.','🩺 O <b>relatório para consulta</b> agora gera um <b>PDF de verdade</b>, pronto para salvar ou mandar no WhatsApp.','👍👎 Nos padrões da Stats, diga se <b>faz sentido</b> ou não: o Ninho aprende e mostra mais do que importa para você.']},
+ {v:'0.29',i:['🎁 Cada recompensa agora <b>junta as suas próprias tarefas</b>: resgatar uma não tira o progresso das outras.','⏳ Duas recompensas com a <b>mesma meta no mesmo dia</b>? A segunda entra na fila e começa a contar quando você resgatar a primeira.','🎯 <b>Uma coisa só</b> agora abre direto a escolha da tarefa e, em seguida, o cronômetro.','🩺 O <b>relatório para consulta</b> agora gera um <b>PDF de verdade</b>: salve, mande no WhatsApp ou toque em <b>Enviar para o e-mail</b> para recebê-lo na sua caixa de entrada.','👍👎 Nos padrões da Stats, diga se <b>faz sentido</b> ou não: o Ninho aprende e mostra mais do que importa para você.']},
  {v:'0.28',i:['🎁 Ao resgatar uma recompensa, ela <b>sai da lista</b> e vai para <b>Resgatadas</b> (com opção de desfazer), e uma <b>revoada de passarinhos</b> comemora com você.']},
  {v:'0.27',i:['🎯 <b>Uma coisa só</b>: na aba Tarefas, mostra só a próxima tarefa, grandona. Concluiu, vem a próxima.','◦ <b>Passinhos</b>: toque no nome de uma tarefa para quebrá-la em pedacinhos. Cada passinho conta.','📅 <b>Resumo da semana</b> aos domingos (e na aba Stats).','🩺 <b>Relatório para consulta</b>: em Stats ou em Conexões e dados, para salvar em PDF e enviar.','🔥 <b>Fogacho em um toque</b> na Saúde, com hora e intensidade (para quem acompanha a menopausa).']},
  {v:'0.26',i:['✨ Ao abrir o app, o <b>menu de baixo</b> sobe devagarinho e a <b>barra de progresso</b> das tarefas vai enchendo até onde você está no dia.']},
