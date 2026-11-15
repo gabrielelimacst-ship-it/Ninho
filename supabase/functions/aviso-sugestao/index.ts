@@ -1,12 +1,14 @@
-// Ninho - aviso de sugestao (Supabase Edge Function "aviso-sugestao") - versao 4
+// Ninho - aviso de sugestao (Supabase Edge Function "aviso-sugestao") - versao 5
 // O app chama esta funcao logo depois de salvar uma sugestao.
 // Ela confere o login de quem enviou e manda um e-mail para a dona do app pelo Gmail (porta 465).
 // Segredos necessarios (Edge Functions > Secrets): GMAIL_USER e GMAIL_SENHA_APP.
 // Opcional: AVISO_PARA (para quem vai o aviso; padrao = GMAIL_USER).
+// WhatsApp (opcional, API oficial da Meta): WA_TOKEN, WA_PHONE_ID, WA_PARA (numero com DDI, so digitos, ex.: 5511999999999)
+// e WA_MODELO (nome do modelo aprovado; padrao nova_sugestao). Veja docs/whatsapp.md.
 // Arquivo so com caracteres simples (sem crases nem acentos) para colar sem erro.
 import nodemailer from "npm:nodemailer@6.9.16";
 
-const VERSAO = 4;
+const VERSAO = 5;
 const CORS = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
@@ -20,6 +22,39 @@ const ANON = Deno.env.get("SUPABASE_ANON_KEY") || "sb_publishable_a4_5xhZAn9NhGW
 const USER = Deno.env.get("GMAIL_USER") || "";
 const PASS = (Deno.env.get("GMAIL_SENHA_APP") || "").replace(/\s/g, "");
 const PARA = Deno.env.get("AVISO_PARA") || USER;
+const WA_TOKEN = Deno.env.get("WA_TOKEN") || "";
+const WA_PHONE_ID = Deno.env.get("WA_PHONE_ID") || "";
+const WA_PARA = (Deno.env.get("WA_PARA") || "").replace(/\D/g, "");
+const WA_MODELO = Deno.env.get("WA_MODELO") || "nova_sugestao";
+const WA_IDIOMA = Deno.env.get("WA_IDIOMA") || "pt_BR";
+const waOk = () => !!(WA_TOKEN && WA_PHONE_ID && WA_PARA);
+
+// Texto de parametro do modelo: a Meta nao aceita quebra de linha, tab nem 4+ espacos seguidos
+const waTx = (t: unknown, max: number) =>
+  String(t ?? "").replace(/[\r\n\t]+/g, " ").replace(/ {2,}/g, " ").trim().slice(0, max) || "-";
+
+// Manda o aviso pelo WhatsApp usando o modelo aprovado: {{1}} = tipo, {{2}} = texto, {{3}} = quem enviou
+export async function whatsapp(tipo: string, texto: string, email: string) {
+  const r = await fetch("https://graph.facebook.com/v21.0/" + WA_PHONE_ID + "/messages", {
+    method: "POST",
+    headers: { Authorization: "Bearer " + WA_TOKEN, "Content-Type": "application/json" },
+    body: JSON.stringify({
+      messaging_product: "whatsapp",
+      to: WA_PARA,
+      type: "template",
+      template: {
+        name: WA_MODELO,
+        language: { code: WA_IDIOMA },
+        components: [{ type: "body", parameters: [
+          { type: "text", text: waTx(tipo, 30) },
+          { type: "text", text: waTx(texto, 900) },
+          { type: "text", text: waTx(email || "alguem", 120) },
+        ] }],
+      },
+    }),
+  });
+  if (!r.ok) throw new Error("whatsapp " + r.status + " " + (await r.text()).slice(0, 300));
+}
 const TIPOS = ["Ideia", "Problema", "Elogio"];
 
 const esc = (t: unknown) =>
@@ -67,7 +102,7 @@ export async function enviar(m: { assunto: string; texto: string; html: string }
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: CORS });
   // Conferencia rapida: qual versao esta instalada e se os segredos do Gmail existem (sem mostrar nenhum valor)
-  if (req.method === "GET") return json({ versao: VERSAO, gmail: !!(USER && PASS) });
+  if (req.method === "GET") return json({ versao: VERSAO, gmail: !!(USER && PASS), whatsapp: waOk() });
   if (req.method !== "POST") return json({ ok: false }, 405);
   if (!USER || !PASS) return json({ ok: false, msg: "Faltam os segredos GMAIL_USER e GMAIL_SENHA_APP" }, 500);
 
@@ -82,10 +117,12 @@ Deno.serve(async (req) => {
   if (texto.length < 3) return json({ ok: false, msg: "texto curto" }, 400);
   const tipo = TIPOS.includes(String(b.tipo)) ? String(b.tipo) : "Ideia";
 
-  try {
-    await enviar(montar({ tipo, texto, email, versao: String(b.versao || "").slice(0, 12), criado_em: new Date().toISOString() }), email || undefined);
-    return json({ ok: true });
-  } catch (e) {
-    return json({ ok: false, msg: "falha no envio", detalhe: String(e).slice(0, 200) }, 500);
-  }
+  // E-mail e WhatsApp saem juntos; se um falhar, o outro ainda chega
+  const [em, wa] = await Promise.allSettled([
+    enviar(montar({ tipo, texto, email, versao: String(b.versao || "").slice(0, 12), criado_em: new Date().toISOString() }), email || undefined),
+    waOk() ? whatsapp(tipo, texto, email) : Promise.resolve(),
+  ]);
+  const det = (x: PromiseSettledResult<unknown>) => x.status === "rejected" ? String(x.reason).slice(0, 200) : "";
+  if (em.status === "rejected" && (wa.status === "rejected" || !waOk())) return json({ ok: false, msg: "falha no envio", detalhe: det(em), whatsapp: det(wa) }, 500);
+  return json({ ok: true, email: em.status === "fulfilled", whatsapp: waOk() ? wa.status === "fulfilled" : null, erro_whatsapp: det(wa) || undefined });
 });
