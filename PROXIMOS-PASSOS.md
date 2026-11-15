@@ -37,6 +37,8 @@ Lista viva do que ficou combinado. Marque com `[x]` o que for concluído.
   - [x] Lembrete de tarefas (por período, com opção de só prioridade alta)
   - [ ] Testar no iPhone: "Mandar um teste" e um remédio daqui a 10 minutos
 
+- [ ] Instalar a função `relatorio-email` no Supabase (nome sem acento, Verify JWT desligado; usa os segredos do Gmail que já existem)
+
 ## 3. Melhorias para depois
 - [x] Ciclo menstrual (fluxo, sintomas, previsão, humor por fase, aviso), opcional em Interface
 - [x] "Há quantos dias" para outra usuária (banho, fluoxetina, caminhar 20 min)
