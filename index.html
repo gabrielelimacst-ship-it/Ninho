@@ -658,9 +658,12 @@ function catOk(){const L=catLer().map((x,i)=>[x[0]||CT[i][0],x[1]||CT[i][1]]);D.
 function catAdd(){if(CT.length>=14)return toast('Dá para ter até 14 categorias');D.cfg.cats=catLer().map((x,i)=>[x[0]||CT[i][0],x[1]||CT[i][1]]);D.cfg.cats.push(['🏷️','Nova']);ctApply();ctgS();setTimeout(()=>{const x=[...document.querySelectorAll('.ctn')].pop();if(x){x.focus();x.select()}},250)}
 function catRst(){if(!confirm('Voltar às 8 categorias originais? As tarefas de categorias que não existem lá passam para “Cotidiano”.'))return;const mp=CT.map(([e,n])=>{const k=CT0.findIndex(d=>d[1]==n||d[0]==e);return k<0?0:k});[...D.tasks,...D.fx].forEach(t=>{t.c=mp[t.c]??0});D.cfg.cats=[];ctApply();save();ctgS();render(1)}
 /* Excluir: as tarefas dessa categoria vão para a primeira que sobrar; as outras são renumeradas */
-function ctgDel(i){if(CT.length<=1)return;const L=catLer().map((x,j)=>[x[0]||CT[j][0],x[1]||CT[j][1]]),q=[...D.tasks,...D.fx].filter(t=>t.c==i).length,dest=L[i==0?1:0];
-if(!confirm('Excluir “'+L[i][1]+'”?'+(q?' '+q+' tarefa(s) dessa categoria passam para “'+dest[1]+'”.':'')))return;
-[...D.tasks,...D.fx].forEach(t=>{if(t.c==i)t.c=0;else if(t.c>i)t.c--});L.splice(i,1);D.cfg.cats=L;ctApply();save();snd('t');ctgS();render(1)}
+let ctgL=null;function ctgDel(i){if(CT.length<=1)return;ctgL=catLer().map((x,j)=>[x[0]||CT[j][0],x[1]||CT[j][1]]);const q=[...D.tasks,...D.fx].filter(t=>t.c==i).length;
+if(!q){if(!confirm('Excluir “'+ctgL[i][1]+'”?'))return;return ctgDelOk(i,-1)}
+scr('Excluir “'+esc(ctgL[i][1])+'”',`<div class="card"><p style="margin-top:0">${q} tarefa(s) estão em <b>${esc(ctgL[i][0]+' '+ctgL[i][1])}</b>. Para qual categoria elas vão?</p><div class="tml">${ctgL.map((c,j)=>j==i?'':`<button class="tmo" onclick="ctgDelOk(${i},${j})"><span>${esc(c[0])}</span><span style="flex:1">${esc(c[1])}</span></button>`).join('')}</div></div>`,'ctgS()')}
+/* move as tarefas para a escolhida e renumera as outras */
+function ctgDelOk(i,d){const L=ctgL||CT.map(x=>[...x]),nd=d<0?0:d>i?d-1:d;[...D.tasks,...D.fx].forEach(t=>{if(t.c==i)t.c=nd;else if(t.c>i)t.c--});if(fc==i)fc=nd;else if(fc>i)fc--;
+const nome=d<0?'':L[d][1];L.splice(i,1);D.cfg.cats=L;ctgL=null;ctApply();save();snd('t');if(nome)toast('Tarefas movidas para '+nome+' ✦');ctgS();render(1)}
 /* Estatísticas */
 const lastN=n=>[...Array(n)].map((_,i)=>{const d=new Date();d.setDate(d.getDate()-(n-1-i));return iso(d)}),tdy=id=>D.tasks.filter(t=>t.d==id||t.dt==id);
 function hv(h,id){const d=rd(id),Q=doses(id),M=Q.length,ts=tdy(id),f={a:Math.min(5,d.w/D.cfg.goal*5),r:d.ml.filter(x=>x).length/3*5,m:M?Q.filter(x=>d.md[x.k]).length/M*5:null,t:ts.length?ts.filter(t=>t.x).length/ts.length*5:null,e:d.ex.length?5:0};
@@ -903,7 +906,7 @@ function wsRm(id){D.ws=(D.ws||[]).filter(x=>x.id!=id);save();$('#wsl').innerHTML
 const NOV='2026-11-icone',ehApp=()=>matchMedia('(display-mode: standalone)').matches||navigator.standalone===true,ehIOS=()=>/iPhone|iPad|iPod/.test(navigator.userAgent);
 /* O que há de novo: o mais recente primeiro; aparece o que a pessoa ainda não viu */
 const NOVS=[
- {v:'0.31',i:['🏷️ Agora dá para <b>excluir categorias</b> de tarefa. As tarefas dela passam para a primeira categoria da lista.']},
+ {v:'0.31',i:['🏷️ Agora dá para <b>excluir categorias</b> de tarefa, escolhendo para qual categoria vão as tarefas dela.']},
  {v:'0.30',i:['🏷️ <b>Categorias do seu jeito</b>: em Perfil → Preferências e registros → Categorias das tarefas, escolha o nome e o emoji de cada uma, crie novas ou exclua as que não usa. As tarefas antigas e as próximas mudam juntas.']},
  {v:'0.29',i:['🎁 Cada recompensa agora <b>junta as suas próprias tarefas</b>: resgatar uma não tira o progresso das outras.','⏳ Duas recompensas com a <b>mesma meta no mesmo dia</b>? A segunda entra na fila e começa a contar quando você resgatar a primeira.','🎯 <b>Uma coisa só</b> agora abre direto a escolha da tarefa e, em seguida, o cronômetro.','🩺 O <b>relatório para consulta</b> agora gera um <b>PDF de verdade</b>: salve, mande no WhatsApp ou toque em <b>Enviar para o e-mail</b> para recebê-lo na sua caixa de entrada.','👍👎 Nos padrões da Stats, diga se <b>faz sentido</b> ou não: o Ninho aprende e mostra mais do que importa para você.']},
  {v:'0.28',i:['🎁 Ao resgatar uma recompensa, ela <b>sai da lista</b> e vai para <b>Resgatadas</b> (com opção de desfazer), e uma <b>revoada de passarinhos</b> comemora com você.']},
