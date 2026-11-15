@@ -32,3 +32,10 @@ create policy "cada um cria a sua chave" on public.relogio_chaves
   for insert to authenticated with check ((select auth.uid()) = user_id);
 create policy "cada um apaga a sua chave" on public.relogio_chaves
   for delete to authenticated using ((select auth.uid()) = user_id);
+
+-- 3) A funcao "relogio" usa a chave de servidor (service_role)
+grant select on public.relogio_chaves to service_role;
+grant select, insert, update on public.relogio to service_role;
+
+-- 4) Calorias ativas
+alter table public.relogio add column if not exists calorias integer;

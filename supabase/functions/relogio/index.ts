@@ -70,11 +70,12 @@ Deno.serve(async (req) => {
   const hoje = new Date(Date.now() - 3 * 3600e3).toISOString().slice(0, 10); // horario de Brasilia
   const dia = /^\d{4}-\d{2}-\d{2}$/.test(String(b.dia || "")) ? String(b.dia) : hoje;
   const linha: Record<string, unknown> = { user_id: achou[0].user_id, dia, atualizado_em: new Date().toISOString() };
-  const passos = num(b.passos), bpm = num(b.bpm), rep = num(b.repouso), sono = minutosDeSono(b.sono);
+  const passos = num(b.passos), bpm = num(b.bpm), rep = num(b.repouso), sono = minutosDeSono(b.sono), cal = num(b.calorias);
   if (passos !== null) linha.passos = Math.round(passos);
   if (sono !== null) linha.sono_min = sono;
   if (bpm !== null) linha.bpm_medio = Math.round(bpm);
   if (rep !== null) linha.bpm_repouso = Math.round(rep);
+  if (cal !== null) linha.calorias = Math.round(cal);
 
   const w = await fetch(SB_URL + "/rest/v1/relogio?on_conflict=user_id,dia", {
     method: "POST",
@@ -87,5 +88,9 @@ Deno.serve(async (req) => {
   if (linha.sono_min) partes.push(Math.floor(Number(linha.sono_min) / 60) + "h" + String(Number(linha.sono_min) % 60).padStart(2, "0") + " de sono");
   if (linha.passos !== undefined) partes.push(linha.passos + " passos");
   if (linha.bpm_repouso) partes.push(linha.bpm_repouso + " bpm em repouso");
+  else if (linha.bpm_medio) partes.push(linha.bpm_medio + " bpm em media");
+  if (linha.calorias) partes.push(linha.calorias + " kcal");
+  // ajuda a achar o problema quando o sono nao chega
+  if (!linha.sono_min) partes.push("sono nao chegou (recebi: " + String(b.sono ?? "nada").slice(0, 30) + ")");
   return json({ ok: true, msg: "Ninho atualizado: " + (partes.join(", ") || "sem numeros hoje") });
 });
