@@ -49,7 +49,7 @@ Lista viva do que ficou combinado. Marque com `[x]` o que for concluído.
 - [ ] Área de leitura, filmes e games (o que quero ver/ler/jogar e o que já terminei)
 - [x] Layout novo do e-mail de sugestão
 - [ ] Atualizar o código da função `aviso-sugestao` no Supabase para a versão 4
-- [ ] Sugestões chegarem no WhatsApp Business
+- [ ] Sugestões chegarem no WhatsApp (API oficial da Meta): código pronto (aviso-sugestao v5); seguir `docs/whatsapp.md`
       (caminhos: API oficial do WhatsApp Business, que exige conta Meta e modelo de mensagem
       aprovado; ou um serviço intermediário; decidir quando formos fazer)
 - [ ] **Perfis integrados (2 pessoas)**: casais ou famílias verem tarefas conjuntas.
