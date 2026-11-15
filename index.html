@@ -539,7 +539,7 @@ f.b=Math.min(5,(d.bs||[]).length);const w=W[id];f.z=w&&w.sono_min?Math.min(5,w.s
 if(h!='all')return f[h]??0;const v=[f.a,f.r,f.m,f.t,f.e].filter(x=>x!==null);return v.reduce((s,x)=>s+x,0)/v.length}
 function feats(d){const f=[...d.sy,...d.ev,...(d.bs||[])];const did=Object.keys(D.days).find(k=>D.days[k]===d),Q=did?doses(did):[];if(Q.length)f.push(Q.every(x=>d.md[x.k])?'Medicação completa':'Medicação incompleta');f.push(d.w<D.cfg.goal/2?'Pouca água':'Água ok',d.ex.length?'Fez exercício':'Sem exercício');if(d.ml.filter(x=>x).length<3)f.push('Pulou refeição');return f}
 function statsV(){const days=lastN(7),X=i=>46+i*40,Y=v=>160-v*28,ds=Object.values(D.days).filter(d=>d.mood),av=a=>a.reduce((s,x)=>s+x,0)/a.length;let ins=[];
-new Set(ds.flatMap(d=>feats(d))).forEach(F=>{const w=ds.filter(d=>feats(d).includes(F)).map(d=>d.mood),o=ds.filter(d=>!feats(d).includes(F)).map(d=>d.mood);if(w.length>1&&o.length>1){const df=av(w)-av(o);if(Math.abs(df)>=.4)ins.push([df,`Nos dias com “${esc(F)}”, o humor médio foi ${av(w).toFixed(1)} contra ${av(o).toFixed(1)} nos demais (${df>0?'+':''}${df.toFixed(1)}).`])}});
+new Set(ds.flatMap(d=>feats(d))).forEach(F=>{const w=ds.filter(d=>feats(d).includes(F)).map(d=>d.mood),o=ds.filter(d=>!feats(d).includes(F)).map(d=>d.mood);if(w.length>1&&o.length>1){const df=av(w)-av(o);if(Math.abs(df)>=.4)ins.push([df,`Nos dias marcados com “${esc(F)}”, o humor médio foi ${av(w).toFixed(1)} contra ${av(o).toFixed(1)} nos demais (${df>0?'+':''}${df.toFixed(1)}).`])}});
 if(HRT){wGet();const md=Object.entries(D.days).filter(([id,x])=>x.mood&&W[id]),g=(f,txt,out)=>{const A1=md.filter(([id])=>f(W[id])===true).map(([,x])=>x.mood),B1=md.filter(([id])=>f(W[id])===false).map(([,x])=>x.mood);if(A1.length>1&&B1.length>1){const df=av(A1)-av(B1);if(Math.abs(df)>=.3)ins.push([df,`${txt}, o humor médio foi ${av(A1).toFixed(1)}, contra ${av(B1).toFixed(1)} ${out} (${df>0?'+':''}${df.toFixed(1)}).`])}};
 g(w=>!w.sono_min?null:w.sono_min>=420?true:w.sono_min<360?false:null,'⌚ Nos dias depois de dormir 7h ou mais','depois de noites com menos de 6h');
 g(w=>w.passos==null?null:w.passos>=6000,'⌚ Nos dias com 6 mil passos ou mais','nos dias mais parados')}
@@ -551,7 +551,7 @@ causa=[['pulou alguma refeição',id=>rd(id).ml.filter(x=>x).length<3],['comeu t
 ['se exercitou',id=>rd(id).ex.length>0],['não se exercitou',id=>rd(id).ex.length==0],
 ...(mnOn()?[['estava menstruada',id=>(rd(id).mn||0)>0]]:[]),
 ...(HRT?[['dormiu menos de 6h',id=>W[id]&&W[id].sono_min?W[id].sono_min<360:null],['dormiu 7h ou mais',id=>W[id]&&W[id].sono_min?W[id].sono_min>=420:null],['andou menos de 4 mil passos',id=>W[id]&&W[id].passos!=null?W[id].passos<4000:null]]:[]),
-...[...new Set(reg.flatMap(id=>rd(id).ev))].map(n=>['teve “'+esc(n)+'”',id=>rd(id).ev.includes(n)])],
+...[...new Set(reg.flatMap(id=>rd(id).ev))].map(n=>['marcou “'+esc(n)+'”',id=>rd(id).ev.includes(n)])],
 efeito=[...SY.map(([e,n])=>[e,n.toLowerCase(),id=>rd(id).sy.includes(n),1]),...BS.map(([e,n])=>[e,n.toLowerCase(),id=>(rd(id).bs||[]).includes(n),1.4]),
 ['😞','humor baixo',id=>rd(id).mood?rd(id).mood<=2:null,.7],['🥰','humor bom',id=>rd(id).mood?rd(id).mood>=4:null,.7]];
 causa.forEach(([cn,cf],ci)=>efeito.forEach(([ee,en,ef,pe])=>{if(cn.includes(en))return;let a=0,n1=0,b=0,n0=0;reg.forEach(id=>{const c=cf(id),o=ef(id);if(c==null||o==null)return;if(c){n1++;if(o)a++}else{n0++;if(o)b++}});
