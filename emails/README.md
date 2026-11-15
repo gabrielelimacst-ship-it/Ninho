@@ -8,10 +8,13 @@ Para colar no Supabase → Authentication → Emails → Templates
 | Confirm signup | Confirme seu e-mail no Ninho | `confirmar-conta.html` |
 | Reset password | Crie uma nova senha no Ninho | `recuperar-senha.html` |
 | Invite user | Seu convite para o Ninho | `convite.html` |
-| Magic Link | Seu código para entrar no Ninho | `codigo.html` |
+| Magic Link | {{ .Token }} é o seu código do Ninho | `codigo.html` |
 
 Os arquivos usam só caracteres simples (acentos como `&aacute;`) para não
 se perderem na cópia.
 
 `{{ .Token }}` é o código de entrar sem senha. Ele aparece no e-mail para o iPhone/Android
 conseguir sugerir o código em cima do teclado.
+
+O assunto começa com o código porque o iPhone acha o código mais fácil assim. A sugestão em cima
+do teclado só funciona com o app **Mail** da Apple (não com o app do Gmail).
