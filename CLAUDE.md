@@ -15,3 +15,4 @@ Para a arquitetura detalhada, veja [docs/CODEBASE_MAP.md](docs/CODEBASE_MAP.md).
 - O CSS é feito de camadas de sobrescrita: edite o último bloco que define a propriedade.
 - As funções precisam continuar globais, porque os `onclick` são inline.
 - Não coloque segredos no repositório: o Pages publica a raiz inteira.
+- A cada mudança que a usuária vê, suba `VER` e adicione um item no topo de `NOVS` (tela "O que há de novo").
