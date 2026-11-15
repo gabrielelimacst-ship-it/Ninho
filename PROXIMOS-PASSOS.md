@@ -39,6 +39,8 @@ Lista viva do que ficou combinado. Marque com `[x]` o que for concluído.
 
 - [ ] Instalar a função `relatorio-email` no Supabase (nome sem acento, Verify JWT desligado; usa os segredos do Gmail que já existem)
 
+- [ ] Aviso de cadastro: instalar a função `aviso-cadastro` (Verify JWT desligado) e rodar `supabase/sql/aviso-cadastro.sql`
+
 ## 3. Melhorias para depois
 - [x] Ciclo menstrual (fluxo, sintomas, previsão, humor por fase, aviso), opcional em Interface
 - [x] "Há quantos dias" para outra usuária (banho, fluoxetina, caminhar 20 min)
