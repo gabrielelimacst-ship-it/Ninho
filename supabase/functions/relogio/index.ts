@@ -90,7 +90,7 @@ Deno.serve(async (req) => {
   if (linha.bpm_repouso) partes.push(linha.bpm_repouso + " bpm em repouso");
   else if (linha.bpm_medio) partes.push(linha.bpm_medio + " bpm em media");
   if (linha.calorias) partes.push(linha.calorias + " kcal");
-  // ajuda a achar o problema quando o sono nao chega
-  if (!linha.sono_min) partes.push("sono nao chegou (recebi: " + String(b.sono ?? "nada").slice(0, 30) + ")");
-  return json({ ok: true, msg: "Ninho atualizado: " + (partes.join(", ") || "sem numeros hoje") });
+  // o sono agora e registrado a mao no Diario; aqui so avisa quando nada chegou
+  if (!partes.length) return json({ ok: true, msg: "Nenhum numero chegou do app Saude. Confira os filtros do atalho (fonte) e se o Mi Fitness sincronizou." });
+  return json({ ok: true, msg: "Ninho atualizado: " + partes.join(", ") });
 });
