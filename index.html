@@ -302,7 +302,7 @@ L.tasks=porId(L.tasks,R.tasks,'id',(a,b)=>{if(!a.x&&b.x)return Object.assign({},
 L.days=L.days||{};Object.entries(R.days||{}).forEach(([id,r])=>{const l=L.days[id];if(!l){L.days[id]=r;return}
 l.w=Math.max(l.w||0,r.w||0);l.ml=(l.ml||[0,0,0]).map((v,i)=>v||(r.ml||[])[i]?1:0);l.md=Object.assign({},r.md,l.md);Object.keys(r.md||{}).forEach(k=>{if(r.md[k])l.md[k]=1});
 l.hr=Object.assign({},r.hr,l.hr);Object.keys(r.hr||{}).forEach(k=>{if(r.hr[k])l.hr[k]=1});['sy','ev','bs','bo'].forEach(k=>l[k]=uni(l[k],r[k]));
-l.ex=porId(l.ex,r.ex,'t');l.mood=l.mood||r.mood;l.lib=l.lib||r.lib;l.reg=l.reg||r.reg;if((r.nt||'').length>(l.nt||'').length)l.nt=r.nt;l.nts=porId(l.nts,r.nts);l.fgs=porId(l.fgs,r.fgs);l.sono=l.sono||r.sono;l.mp=porId(l.mp,r.mp);if(!l.ntd&&r.ntd)l.ntd=r.ntd});
+l.ex=porId(l.ex,r.ex,'t');l.mood=l.mood||r.mood;l.lib=l.lib||r.lib;l.reg=l.reg||r.reg;if((r.nt||'').length>(l.nt||'').length)l.nt=r.nt;l.nts=porId(l.nts,r.nts);l.fgs=porId(l.fgs,r.fgs);l.gc=porId(l.gc,r.gc);l.ge=porId(l.ge,r.ge);l.sono=l.sono||r.sono;l.mp=porId(l.mp,r.mp);if(!l.ntd&&r.ntd)l.ntd=r.ntd});
 L.xp=Math.max(L.xp||0,R.xp||0);L.sp=Math.max(L.sp||0,R.sp||0);L.id=Math.max(L.id||1,R.id||1);save()}
 function conflict(rd){cfx=1;const w=new Date(rd.atualizado_em).toLocaleString('pt-BR',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'}),o=document.createElement('div');o.id='cfx';
 o.innerHTML=`<div class="card"><b style="font-size:17px">Seu ninho mudou em outro aparelho</b><p class="sm" style="opacity:.85">Enquanto este aparelho estava sem sincronizar, o seu ninho também foi alterado em outro lugar (${w}). Qual versão você quer manter?</p><button class="sgb w" onclick="cfxR(1)">Manter a do outro aparelho</button><button class="gb w" style="margin-top:10px;padding:14px" onclick="cfxR(0)">Manter a deste aparelho</button><p class="sm" style="opacity:.6;margin:12px 4px 0">A versão que você não escolher será substituída.</p></div>`;
@@ -613,6 +613,7 @@ const pads=(()=>{try{const w=document.createElement('div');w.innerHTML=statsV();
 const h=`<button class="relx noprint" onclick="$('#rel').remove()" aria-label="Fechar relatório">×</button><div class="rcab"><div><b style="font-size:22px">Relatório de saúde</b><div class="sm">${esc(D.cfg.nick||U)} · ${br(ds[0])} a ${br(ds[n-1])} · ${rg.length} dia(s) com registro</div></div><div class="noprint"><button class="gb" onclick="relPdf(this)">📄 Salvar PDF</button> <button class="gb" onclick="relMail(this)">✉️ Enviar para o e-mail</button></div></div>
 ${sec('Humor',md.length?`<p>Média <b>${av(md).toFixed(1)}</b> de 5 em ${md.length} dia(s). ${[1,2,3,4,5].map(i=>MO[i-1]+' '+['Muito mal','Mal','Neutro','Bem','Muito bem'][i-1]+': '+md.filter(x=>x==i).length).join(' · ')}</p>`:'')}
 ${sec('Sintomas no corpo',tb(cnt(d=>d.bs||[]).map(([k,v])=>[k,v+' dia(s)',pc(v,rg.length)]),['Sintoma','Dias','% dos dias registrados']))}
+${sec('Digestão',(()=>{const C=rg.flatMap(id=>rd(id).gc||[]),E=rg.flatMap(id=>rd(id).ge||[]);if(!C.length&&!E.length)return'';return`<p>${Object.entries(GIE).map(([k,[e,n]])=>n+': '+E.filter(x=>x.k==k).length+' episódio(s)').join(' · ')}. ${Object.entries(GIC).map(([k,[e,n]])=>n+': '+rg.filter(id=>(rd(id).gc||[]).some(x=>x.k==k)).length+' dia(s)').join(' · ')}.</p>${giPad().replace(/<[^>]*class="sm"[^>]*>/g,'<p>')}`})())}
 ${sec('Fogachos',fgs.length?`<p><b>${fgs.length}</b> registrado(s): ${[1,2,3].map(i=>fgs.filter(x=>x.i==i).length+' '+FGI[i]).join(', ')}. ${(()=>{const hs=fgs.filter(x=>x.h&&x.h!='—').map(x=>+x.h.slice(0,2));if(!hs.length)return'';const p=[['madrugada',0,6],['manhã',6,12],['tarde',12,18],['noite',18,24]].map(([n,a,b])=>[n,hs.filter(x=>x>=a&&x<b).length]).sort((a,b)=>b[1]-a[1])[0];return'Mais comuns de '+p[0]+'.'})()}</p>`:'')}
 ${sec('Sentimentos',tb(cnt(d=>d.sy||[]).slice(0,8).map(([k,v])=>[k,v+' dia(s)']),['Sentimento','Dias']))}
 ${sec('Remédios',tb(Object.entries(meds).map(([k,[a,b]])=>[esc(k),a+' de '+b+' doses',pc(a,b)]),['Remédio','Marcadas','Adesão']))}
@@ -695,6 +696,26 @@ const EVE={'dormi bem':'😴','dormi mal':'🥱','social':'🫶','trabalho/estud
 /* Sensações extras de ansiedade, só no perfil da dona */
 const SYX=[['🫲','Braços dormentes'],['🫀','Aperto no peito'],['😢','Choro'],['😨','Medo']];
 function syExtra(){if(HRT&&!SY.some(x=>x[1]==SYX[0][1]))SY.push(...SYX)}
+/* Digestão (só no perfil da dona): o que comeu (lactose/glúten) e episódios de diarreia e estufamento, com hora,
+   para ver se os sintomas vêm depois de certos alimentos */
+const GIC={lactose:['🥛','Lactose'],gluten:['🍞','Glúten']},GIE={d:['💩','Diarreia'],e:['🎈','Estufamento']},GII=['','leve','médio','forte'];
+const hmn=h=>{const[a,b]=(h||'').split(':');return a?(+a)*60+(+b||0):null};
+function giV(J){const d=rd(J),C=d.gc||[],E=d.ge||[],hj=J==TODAY();
+const dep=x=>{const t=hmn(x.h);if(t==null)return'';const ant=C.filter(c=>hmn(c.h)!=null&&hmn(c.h)<=t&&t-hmn(c.h)<=360).sort((a,b)=>hmn(b.h)-hmn(a.h))[0];if(!ant)return'';const m=t-hmn(ant.h);return' · '+(m>=60?Math.floor(m/60)+'h'+(m%60?pad(m%60):''):m+'min')+' depois de '+GIC[ant.k][0]};
+return`<div class="lb">🥛 Digestão</div><p class="sm" style="margin:0 0 8px">Comeu? Sentiu? Um toque e a hora fica guardada.</p>
+<div class="row" style="gap:8px;flex-wrap:wrap">${Object.entries(GIC).map(([k,[e,n]])=>`<button class="chip" onclick="giC('${k}')">${e} Comi ${n.toLowerCase()}</button>`).join('')}</div>
+<div class="row" style="gap:8px;flex-wrap:wrap;margin-top:6px">${Object.entries(GIE).map(([k,[e,n]])=>`<button class="chip" onclick="giE('${k}')">${e} ${n}</button>`).join('')}</div>
+${C.length+E.length?`<div style="margin-top:8px">${[...C.map(x=>({...x,c:1})),...E].sort((a,b)=>(hmn(a.h)??9999)-(hmn(b.h)??9999)).map(x=>`<div class="mr"><div>${x.c?GIC[x.k][0]+' '+GIC[x.k][1]:GIE[x.k][0]+' '+GIE[x.k][1]+' · '+GII[x.i]}<div class="sm">${x.h||'sem hora'}${x.c?'':dep(x)}</div></div><button class="x" onclick="giRm('${x.id}','${J}')" aria-label="Apagar">×</button></div>`).join('')}</div>`:''}${giPad()}`}
+function giNow(J){return J==TODAY()?new Date().toTimeString().slice(0,5):''}
+function giC(k){const J=HJ(),d=day(J);d.gc=d.gc||[];d.gc.push({id:Date.now().toString(36),k,h:giNow(J)});save();snd('t');vibr();render(1);toast(GIC[k][0]+' Anotado')}
+function giE(k){scr(GIE[k][0]+' '+GIE[k][1],`<div class="card"><p class="sm" style="margin-top:0">Qual a intensidade?</p><div class="seg f">${[1,2,3].map(i=>`<button onclick="giE2('${k}',${i})">${GII[i]}</button>`).join('')}</div></div>`,'closeM()')}
+function giE2(k,i){const J=HJ(),d=day(J);d.ge=d.ge||[];d.ge.push({id:Date.now().toString(36),k,i,h:giNow(J)});save();snd('t');vibr();closeM();render(1);toast('Registrado')}
+function giRm(id,J){if(!confirm('Apagar este registro?'))return;const d=day(J);d.gc=(d.gc||[]).filter(x=>x.id!=id);d.ge=(d.ge||[]).filter(x=>x.id!=id);save();render(1)}
+/* padrão dos últimos 60 dias: nos dias com lactose/glúten, quantos tiveram sintoma */
+function giPad(){const ds=lastN(60).filter(id=>D.days[id]&&((D.days[id].gc||[]).length||(D.days[id].ge||[]).length));if(ds.length<4)return'<p class="sm" style="margin:10px 0 0">Com alguns dias de registro, o Ninho mostra aqui se os sintomas aparecem mais depois de lactose ou glúten.</p>';
+const L=Object.entries(GIC).map(([k,[e,n]])=>{const com=ds.filter(id=>(D.days[id].gc||[]).some(x=>x.k==k)),sem=ds.filter(id=>!(D.days[id].gc||[]).some(x=>x.k==k)),s=id=>(D.days[id].ge||[]).length>0,pc=a=>a.length?Math.round(a.filter(s).length/a.length*100):null;
+if(com.length<2||sem.length<2)return'';return`${e} Nos dias com ${n.toLowerCase()}, sintomas em <b>${pc(com)}%</b> (${com.filter(s).length} de ${com.length}); sem ${n.toLowerCase()}, em <b>${pc(sem)}%</b>.`}).filter(Boolean);
+return L.length?`<div style="margin-top:10px">${L.map(x=>`<p class="sm" style="margin:4px 0 0;opacity:.9">${x}</p>`).join('')}<p class="sm" style="margin:6px 0 0;opacity:.6">Pistas para levar à consulta. Só um exame confirma intolerância.</p></div>`:''}
 /* Estatísticas */
 const lastN=n=>[...Array(n)].map((_,i)=>{const d=new Date();d.setDate(d.getDate()-(n-1-i));return iso(d)}),tdy=id=>D.tasks.filter(t=>t.d==id||t.dt==id);
 function hv(h,id){const d=rd(id),Q=doses(id),M=Q.length,ts=tdy(id),f={a:Math.min(5,d.w/D.cfg.goal*5),r:d.ml.filter(x=>x).length/3*5,m:M?Q.filter(x=>d.md[x.k]).length/M*5:null,t:ts.length?ts.filter(t=>t.x).length/ts.length*5:null,e:d.ex.length?5:0};
@@ -712,11 +733,12 @@ causa=[['pulou alguma refeição',id=>rd(id).ml.filter(x=>x).length<3],['comeu t
 ['não completou os remédios',id=>{const Q=doses(id);return Q.length?!Q.every(x=>rd(id).md[x.k]):null}],['tomou todos os remédios',id=>{const Q=doses(id);return Q.length?Q.every(x=>rd(id).md[x.k]):null}],
 ['se exercitou',id=>rd(id).ex.length>0],['não se exercitou',id=>rd(id).ex.length==0],
 ...(mnOn()?[['estava menstruada',id=>(rd(id).mn||0)>0]]:[]),
+...(HRT?[['comeu lactose',id=>(rd(id).gc||[]).some(x=>x.k=='lactose')],['comeu glúten',id=>(rd(id).gc||[]).some(x=>x.k=='gluten')]]:[]),
 ['dormiu menos de 6h',id=>sonoDe(id)?sonoDe(id)<360:null],['dormiu 7h ou mais',id=>sonoDe(id)?sonoDe(id)>=420:null],
 ...(HRT?[['andou menos de 4 mil passos',id=>W[id]&&W[id].passos!=null?W[id].passos<4000:null]]:[]),
 ...[...new Set(reg.flatMap(id=>(rd(id).mp||[]).map(x=>x.n)))].map(n=>['tomou “'+esc(n)+'”',id=>(rd(id).mp||[]).some(x=>x.n==n)]),
 ...[...new Set(reg.flatMap(id=>rd(id).ev))].map(n=>['marcou “'+esc(n)+'”',id=>rd(id).ev.includes(n)])],
-efeito=[...SY.map(([e,n])=>[e,n.toLowerCase(),id=>rd(id).sy.includes(n),1]),...BS.map(([e,n])=>[e,n.toLowerCase(),id=>(rd(id).bs||[]).includes(n),1.4]),
+efeito=[...(HRT?[['💩','diarreia',id=>(rd(id).ge||[]).some(x=>x.k=='d'),1.4],['🎈','estufamento',id=>(rd(id).ge||[]).some(x=>x.k=='e'),1.4]]:[]),...SY.map(([e,n])=>[e,n.toLowerCase(),id=>rd(id).sy.includes(n),1]),...BS.map(([e,n])=>[e,n.toLowerCase(),id=>(rd(id).bs||[]).includes(n),1.4]),
 ['😞','humor baixo',id=>rd(id).mood?rd(id).mood<=2:null,.7],['🥰','humor bom',id=>rd(id).mood?rd(id).mood>=4:null,.7]];
 causa.forEach(([cn,cf],ci)=>efeito.forEach(([ee,en,ef,pe])=>{if(cn.includes(en))return;let a=0,n1=0,b=0,n0=0;reg.forEach(id=>{const c=cf(id),o=ef(id);if(c==null||o==null)return;if(c){n1++;if(o)a++}else{n0++;if(o)b++}});
 if(n1<2||n0<2||a<2)return;const p1=a/n1,p0=b/n0,df=p1-p0;if(df<.3)return;ins.push([df*Math.sqrt(n1)*1.4*pe,`${ee} Nos dias em que você <b>${cn}</b>, teve <b>${en}</b> em ${a} de ${n1} (${Math.round(p1*100)}%), contra ${Math.round(p0*100)}% nos outros dias.`,ci<8?'c'+(ci>>1):'c'+ci,'x:'+cn+'>'+en,cn,en])}))}
@@ -884,7 +906,7 @@ const nBR=n=>(+n).toLocaleString('pt-BR',{maximumFractionDigits:3}),BSH=['Fogach
 function hrtV(T=HJ()){const d=rd(T),doses=D.hr.map(h=>{const n=dd(h.d,T),ok=n>=0&&n%h.iv==0;return`<div class="mr"><div>${esc(h.n)}<div class="sm">${h.h||'sem horário'} · a cada ${h.iv} dia(s)${ok?'':' · próxima em '+(n<0?-n:h.iv-n%h.iv)+' dia(s)'}</div></div>${ok?ck(d.hr[h.id],`hrT(${h.id},event)`,last=='h'+h.id,h.f):'<span class="sm">—</span>'}</div>`}).join('')||'<p class="sm">Cadastre sua reposição em Perfil › Preferências e registros.</p>',
 lab=[...new Set(D.lab.map(x=>x.k+'|'+(x.n||'')))].map(key=>{const v=D.lab.filter(x=>x.k+'|'+(x.n||'')==key).sort((a,b)=>a.d<b.d?1:-1)[0];return`${lbN(v)}: ${nBR(v.v)} ${esc(lbU(v))}`}).slice(0,4);
 return(D.cfg.hrt?`<div class="lb2">🌸 Menopausa</div>`+A(`<div class="lb">💗 Libido</div><div class="seg f">${['Nenhuma','Baixa','Média','Alta'].map((l,i)=>`<button class="${d.lib==i+1?'on':''}" onclick="libS(${i+1})">${l}</button>`).join('')}</div>`):'')
-+(D.cfg.hrt?A(fgV(T)):'')+menV(T)+A(`<div class="lb">Sintomas no corpo</div><div class="chips w" style="margin:0">${BS.map(([e,n],i)=>D.cfg.hrt||!BSH.includes(n)?chip('bs',i,e,n,d):'').join('')}</div>`)
++(D.cfg.hrt?A(fgV(T)):'')+(HRT?A(giV(T)):'')+menV(T)+A(`<div class="lb">Sintomas no corpo</div><div class="chips w" style="margin:0">${BS.map(([e,n],i)=>D.cfg.hrt||!BSH.includes(n)?chip('bs',i,e,n,d):'').join('')}</div>`)
 +(D.cfg.exm?A(`<div class="row sp"><div class="lb" style="margin:0">🧪 Exames</div><button class="gb" onclick="labS()">Registrar</button></div>${lab.map(x=>`<p class="sm" style="margin:8px 0 0">Último · ${x}</p>`).join('')||'<p class="sm">Registre seus exames de sangue (glicose, colesterol, tireoide, vitaminas, hormônios…) para acompanhar a tendência.</p>'}`):'')}
 function libS(n){const d=day(HJ());d.lib=d.lib==n?0:n;save();snd('t');vibr();render(1)}
 /* Ciclo menstrual (opcional, em Interface; não aparece na conta com menopausa) */
