@@ -692,10 +692,13 @@ function sonoV(J){const v=sonoDe(J);return`<div class="row sp"><div class="lb" s
 function sonoS(J){const v=sonoDe(J);scr('Sono da noite',`<div class="card"><p class="sm" style="margin-top:0">Quanto você dormiu ${J==TODAY()?'esta noite':'na noite deste dia'}?</p><div class="row" style="gap:10px;align-items:center"><input id="snh" type="number" inputmode="numeric" min="0" max="16" value="${v?Math.floor(v/60):''}" placeholder="h" style="width:80px;text-align:center"><span>h</span><input id="snm" type="number" inputmode="numeric" min="0" max="59" value="${v?v%60:''}" placeholder="min" style="width:80px;text-align:center"><span>min</span></div><div class="chips">${[5,6,7,8].map(h=>`<button class="chip" onclick="$('#snh').value=${h};$('#snm').value=0">${h}h</button>`).join('')}</div><button class="sgb w" style="margin-top:12px" onclick="sonoOk('${J}')">Salvar</button>${v?`<button class="x" style="width:auto;margin:12px auto 0;display:block;padding:0 12px;font-size:13px" onclick="sonoOk('${J}',1)">Apagar</button>`:''}</div>`,'closeM()')}
 function sonoOk(J,rm){const d=day(J);if(rm)delete d.sono;else{const m=(+$('#snh').value||0)*60+(+$('#snm').value||0);if(!(m>0&&m<=16*60))return toast('Coloque as horas de sono');d.sono=m}save();snd('ok');closeM();render(1);toast(rm?'Sono apagado':'Sono registrado ✦')}
 /* Emojis dos eventos que já vêm no app (os criados pela pessoa ficam sem) */
-const EVE={'dormi bem':'😴','dormi mal':'🥱','social':'🫶','trabalho/estudo':'💼','discussão':'💢','tempo ao ar livre':'🌳','muito café':'☕','tela demais':'📱','procrastinação':'🐌','hiperfoco':'🔦','notícia ruim':'📰','conquista':'🏆'};
+const EVE={'dormi bem':'😴','dormi mal':'🥱','social':'🫶','trabalho/estudo':'💼','discussão':'💢','tempo ao ar livre':'🌳','muito café':'☕','tela demais':'📱','procrastinação':'🐌','hiperfoco':'🔦','notícia ruim':'📰','conquista':'🏆','choro':'😢','dormi muito':'🛌','dormi pouco':'😪','dormi demais':'🛌','animada':'🤩'};
 /* Sensações extras de ansiedade, só no perfil da dona */
-const SYX=[['🫲','Braços dormentes'],['🫀','Aperto no peito'],['😢','Choro'],['😨','Medo']];
-function syExtra(){if(HRT&&!SY.some(x=>x[1]==SYX[0][1]))SY.push(...SYX)}
+const SYX=[['🫲','Braços dormentes'],['🫀','Aperto no peito'],['😨','Medo'],['🔦','Hiperfoco'],['🤩','Animada'],['🌀','Dispersa'],['🫨','Com tremores']];
+function syExtra(){if(!HRT)return;if(!SY.some(x=>x[1]==SYX[0][1]))SY.push(...SYX);
+/* uma vez: Choro passa de sensação para evento, Hiperfoco de evento para sensação (com o histórico) */
+if(D&&!D.cfg.evMig2){D.ev=D.ev.filter(n=>n!='Hiperfoco');['Choro','Dormi muito','Dormi pouco'].forEach(n=>D.ev.includes(n)||D.ev.push(n));
+Object.values(D.days).forEach(x=>{if((x.sy||[]).includes('Choro')){x.sy=x.sy.filter(n=>n!='Choro');x.ev=x.ev||[];x.ev.includes('Choro')||x.ev.push('Choro')}if((x.ev||[]).includes('Hiperfoco')){x.ev=x.ev.filter(n=>n!='Hiperfoco');x.sy=x.sy||[];x.sy.includes('Hiperfoco')||x.sy.push('Hiperfoco')}});D.cfg.evMig2=1;save()}}
 /* Digestão (só no perfil da dona): o que comeu (lactose/glúten) e episódios de diarreia e estufamento, com hora,
    para ver se os sintomas vêm depois de certos alimentos */
 const GIC={lactose:['🥛','Lactose'],gluten:['🍞','Glúten']},GIE={d:['💩','Diarreia'],e:['🎈','Estufamento']},GII=['','leve','médio','forte'];
