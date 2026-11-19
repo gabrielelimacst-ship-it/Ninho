@@ -733,7 +733,7 @@ const L=Object.entries(GIC).map(([k,[e,n]])=>{const com=ds.filter(id=>gcOf(D.day
 if(com.length<2||sem.length<2)return'';return`${e} Nos dias com ${n.toLowerCase()}, sintomas em <b>${pc(com)}%</b> (${com.filter(s).length} de ${com.length}); sem ${n.toLowerCase()}, em <b>${pc(sem)}%</b>.`}).filter(Boolean);
 return L.length?`<div style="margin-top:10px">${L.map(x=>`<p class="sm" style="margin:4px 0 0;opacity:.9">${x}</p>`).join('')}<p class="sm" style="margin:6px 0 0;opacity:.6">Pistas para levar à consulta. Só um exame confirma intolerância.</p></div>`:''}
 /* Livros e análises literárias (só no perfil da dona): botão 📚 no topo abre como se fosse uma aba */
-const LVC=[['enr','Enredo e ritmo'],['per','Construção de personagens'],['esc','Escrita e estilo'],['amb','Ambientação e mundo'],['fin','Final e impacto']],LVS={q:'Quero ler',l:'Lendo',f:'Lido'};
+const LVC=[['esc','Escrita & Estilo'],['nar','Narrativa & Estrutura'],['per','Desenvolvimento de personagens'],['imp','Impacto & Envolvimento'],['ori','Originalidade']],LVS={q:'Quero ler',l:'Lendo',f:'Lido'};
 let lvVolta='t',lvF='l';function lvAbre(){lvVolta=tab=='l'?lvVolta:tab;const L=D.lv||[];lvF=L.some(b=>b.st=='l')?'l':L.some(b=>b.st=='f')?'f':L.length?'q':'l';go2('l')}
 const lvMed=b=>{const v=LVC.map(([k])=>(b.r||{})[k]).filter(Boolean);return v.length?v.reduce((a,x)=>a+x,0)/v.length:0},
 estr=(n,t=5)=>[...Array(t)].map((_,i)=>i<Math.round(n)?'★':'☆').join('');
