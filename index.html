@@ -700,7 +700,9 @@ function sonoOk(J,rm){const d=day(J);if(rm)delete d.sono;else{const m=(+$('#snh'
 const EVE={'dormi bem':'😴','dormi mal':'🥱','social':'🫶','trabalho/estudo':'💼','discussão':'💢','tempo ao ar livre':'🌳','muito café':'☕','tela demais':'📱','procrastinação':'🐌','hiperfoco':'🔦','notícia ruim':'📰','conquista':'🏆','choro':'😢','dormi muito':'🛌','dormi pouco':'😪','dormi demais':'🛌','animada':'🤩'};
 /* Sensações extras de ansiedade, só no perfil da dona */
 const SYX=[['🫲','Braços dormentes'],['🫀','Aperto no peito'],['😨','Medo'],['🔦','Hiperfoco'],['🤩','Animada'],['🌀','Dispersa'],['🫨','Com tremores']];
-function syExtra(){if(!HRT)return;if(!SY.some(x=>x[1]==SYX[0][1]))SY.push(...SYX);
+function syExtra(){if(!HRT)return;
+/* uma vez: Systen passa a ser todo domingo e quinta (aparece nesses dias na Saúde e na Agenda) */
+if(D&&!D.cfg.systenW){D.meds.filter(m=>/systen/i.test(m.n)).forEach(m=>{m.fq='w';m.dw=[0,4];delete m.iv;delete m.d0});D.cfg.systenW=1;save()}if(!SY.some(x=>x[1]==SYX[0][1]))SY.push(...SYX);
 /* uma vez: Choro passa de sensação para evento, Hiperfoco de evento para sensação (com o histórico) */
 if(D&&!D.cfg.evMig2){D.ev=D.ev.filter(n=>n!='Hiperfoco');['Choro','Dormi muito','Dormi pouco'].forEach(n=>D.ev.includes(n)||D.ev.push(n));
 Object.values(D.days).forEach(x=>{if((x.sy||[]).includes('Choro')){x.sy=x.sy.filter(n=>n!='Choro');x.ev=x.ev||[];x.ev.includes('Choro')||x.ev.push('Choro')}if((x.ev||[]).includes('Hiperfoco')){x.ev=x.ev.filter(n=>n!='Hiperfoco');x.sy=x.sy||[];x.sy.includes('Hiperfoco')||x.sy.push('Hiperfoco')}});D.cfg.evMig2=1;save()}}
